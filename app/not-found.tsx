@@ -1,5 +1,16 @@
 'use client'
 
 export default function NotFound() {
-  return <>페이지를 찾을 수 없습니다.</>
+  return (
+    <>
+      <img src={'/images/404.png'}></img>
+
+      <style jsx>{`
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+      `}</style>
+    </>
+  )
 }

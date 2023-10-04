@@ -1,5 +1,16 @@
 'use client'
 
 export default function Loading() {
-  return <>로딩 화면입니다.</>
+  return (
+    <>
+      <img src={'/images/loading.png'}></img>
+
+      <style jsx>{`
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+      `}</style>
+    </>
+  )
 }

@@ -88,6 +88,7 @@ export default function Wrapper({ children }: Props) {
           width: 150px;
           background-color: #f7f7f7;
           display: flex;
+          overflow: auto;
         }
 
         .sidebar-icons {
@@ -95,10 +96,8 @@ export default function Wrapper({ children }: Props) {
           margin: 15vh 0;
           display: flex;
           flex-direction: column;
-          flex-wrap: nowrap;
           align-items: center;
           justify-content: space-between;
-          overflow: auto;
         }
 
         .sidebar-icon {
@@ -109,7 +108,7 @@ export default function Wrapper({ children }: Props) {
         }
 
         .sidebar-icon span {
-          margin-top: 10px;
+          margin: 10px 0;
           color: #eeb9be;
           font-weight: 700;
         }
@@ -143,7 +142,7 @@ export default function Wrapper({ children }: Props) {
           }
 
           .sidebar-icon span {
-            margin-top: 5px;
+            margin: 5px 0;
           }
         }
       `}</style>

@@ -20,7 +20,7 @@ export default function Wrapper({ children }: Props) {
           <ul className="sidebar-icons">
             <Link href={'/history'} style={{ textDecoration: 'none' }}>
               <div className="sidebar-icon">
-                <BiPhotoAlbum color="#eeb9be" size="60" />
+                <BiPhotoAlbum color="#eeb9be" size="50" />
                 <span>앨범</span>
               </div>
             </Link>
@@ -30,7 +30,7 @@ export default function Wrapper({ children }: Props) {
                 <AiOutlineSchedule
                   className="sidebar-icon"
                   color="#eeb9be"
-                  size="60"
+                  size="50"
                 />
                 <span>일정</span>
               </div>
@@ -41,7 +41,7 @@ export default function Wrapper({ children }: Props) {
                 <AiFillHome
                   className="sidebar-icon"
                   color="#eeb9be"
-                  size="60"
+                  size="50"
                 />
                 <span>홈</span>
               </div>
@@ -52,7 +52,7 @@ export default function Wrapper({ children }: Props) {
                 <AiOutlineMessage
                   className="sidebar-icon"
                   color="#eeb9be"
-                  size="60"
+                  size="50"
                 />
                 <span>채팅</span>
               </div>
@@ -63,7 +63,7 @@ export default function Wrapper({ children }: Props) {
                 <AiOutlineSetting
                   className="sidebar-icon"
                   color="#eeb9be"
-                  size="60"
+                  size="50"
                 />
                 <span>환경설정</span>
               </div>
@@ -92,12 +92,12 @@ export default function Wrapper({ children }: Props) {
 
         .sidebar-icons {
           width: 100%;
-          margin: 20px 0px;
+          margin: 15vh 0;
           display: flex;
           flex-direction: column;
           flex-wrap: nowrap;
           align-items: center;
-          justify-content: space-around;
+          justify-content: space-between;
           overflow: auto;
         }
 
@@ -118,7 +118,7 @@ export default function Wrapper({ children }: Props) {
           flex-grow: 1;
           display: flex;
           padding: 10px;
-          overflow: scroll;
+          overflow: auto;
         }
 
         @media screen and (max-width: 525px) {
@@ -132,6 +132,14 @@ export default function Wrapper({ children }: Props) {
 
           .sidebar-icons {
             flex-direction: row;
+            margin: 0;
+            justify-content: space-around;
+          }
+
+          .sidebar-icons {
+            flex-direction: row;
+            margin: 0;
+            justify-content: space-around;
           }
 
           .sidebar-icon span {

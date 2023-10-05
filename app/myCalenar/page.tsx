@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../myCalenar/myCalendar.css'
 import CalendarPlan from '../calendarPlan/calendarPlan'
 import CalendarWithContent from '../calendarWithContent/calendarWithContent'
@@ -11,7 +11,6 @@ interface CalendarProps {
 }
 
 export interface PlanContent {
-  date: string
   title: string
   startDate: string
   endDate: string
@@ -20,25 +19,23 @@ export interface PlanContent {
 export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [year, setYear] = useState(initialYear)
   const [month, setMonth] = useState(initialMonth)
-  const [dayClicked, setDayClicked] = useState(false)
   const [planDate, setPlanDate] = useState(0) //어떤 날짜가 클릭됐는지
-  const [dayWContent, setDayWContent] = useState(false)
+  const [startDate, setStartDate] = useState('')
+  const [dayClicked, setDayClicked] = useState(false)
+  const [dayWContent, setDayWContent] = useState(false) //일정있는 날
   const [plancontent, setPlanContent] = useState({
-    date: '',
     title: '',
     startDate: '',
     endDate: '',
     memo: '',
   })
 
-  const [dayPlans, setDayPlans] = useState<{ [key: number]: PlanContent }>({})
+  const [fixedPlans, setFixedPlans] = useState<{
+    [key: string]: PlanContent
+  }>({})
 
   const handleTitleChange = (newTitle: string) => {
     setPlanContent({ ...plancontent, title: newTitle })
-  }
-
-  const handleStartDateChange = (newStartDate: string) => {
-    setPlanContent({ ...plancontent, startDate: newStartDate })
   }
 
   const handleEndDateChange = (newEndDate: string) => {
@@ -56,9 +53,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setDayClicked(!dayClicked)
     setPlanDate(e)
 
-    //초기화
     setPlanContent({
-      date: '',
       title: '',
       startDate: '',
       endDate: '',
@@ -67,12 +62,17 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   }
 
   const savePlanHandler = () => {
-    setPlanContent({ ...plancontent, date: planDate })
-
-    setDayPlans((prevDayPlans) => ({
-      ...prevDayPlans,
-      [planDate]: plancontent,
+    setFixedPlans((prevPlans) => ({
+      ...prevPlans,
+      [plancontent.startDate]: plancontent,
     }))
+
+    setPlanContent({
+      title: '',
+      startDate: '',
+      endDate: '',
+      memo: '',
+    })
   }
 
   const generateCalendar = (year: number, month: number) => {
@@ -131,25 +131,30 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             >
               {day}
             </div>
-            {dayPlans[day] && (
-              <div
-                className="plan-info"
-                onClick={() => {
-                  dayWithContentHandler(day)
-                }}
-              >
-                <p>{dayPlans[day].title}</p>
-              </div>
-            )}
+            {/* {fixedPlans
+              .filter((plan) => plan.date === day)
+              .map((plan, index) => (
+                <div
+                  key={index}
+                  className="plan-info"
+                  onClick={() => {
+                    dayWithContentHandler(day)
+                  }}
+                >
+                  <p>{plan.title}</p>
+                </div>
+              ))} */}
           </div>
         ))}
       </div>
       {dayWContent && (
-        <CalendarWithContent dayPlans={dayPlans} planDate={planDate} />
+        <CalendarWithContent fixedPlans={fixedPlans} planDate={planDate} />
       )}
       {dayClicked && (
         <div className="calendar-plan-popup">
           <CalendarPlan
+            month={month}
+            year={year}
             planDate={planDate}
             setDayClicked={setDayClicked}
             setPlanContent={setPlanContent}
@@ -158,10 +163,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             endDate={plancontent.endDate}
             memo={plancontent.memo}
             onTitleChange={handleTitleChange}
-            onStartDateChange={handleStartDateChange}
             onEndDateChange={handleEndDateChange}
             onMemoChange={handleMemoChange}
             savePlanHandler={savePlanHandler}
+            setStartDate={setStartDate}
           />
         </div>
       )}

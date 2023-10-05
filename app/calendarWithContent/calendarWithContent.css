@@ -28,6 +28,13 @@
 }
 
 .popup-con {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.popup-box {
   width: 50%;
   height: 60%;
   display: flex;

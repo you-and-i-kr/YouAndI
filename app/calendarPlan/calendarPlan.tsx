@@ -1,47 +1,59 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../calendarPlan/calendarPlan.css'
 
 export interface CalendarProps {
   setDayClicked: () => void
   planDate: number
+  month: number
+  year: number
   title: string
-  startDate: string
   endDate: string
   memo: string
   onTitleChange: (newTitle: string) => void
-  onStartDateChange: (newStartDate: string) => void
   onEndDateChange: (newEndDate: string) => void
   onMemoChange: (newMemo: string) => void
-  setSavePlan: (value: boolean) => void // Add this prop
-  savePlanHandler: () => void // Add this prop
+  setSavePlan: (value: boolean) => void
+  savePlanHandler: () => void
+  setPlanContent: () => void
+  setStartDate: (passedDate: string) => void
 }
-
 export const CalendarPlan: React.FC<CalendarProps> = ({
   setDayClicked,
+  month,
+  year,
   planDate,
   title,
-  startDate,
   endDate,
   memo,
   onTitleChange,
-  onStartDateChange,
   onEndDateChange,
   onMemoChange,
   savePlanHandler,
+  setPlanContent,
+  setStartDate,
 }) => {
+  const calendarMonth = month + 1
+  const calendarYear = year
+
+  const [passedDate, setPassedDate] = useState(
+    new Date(calendarYear, month, planDate + 1).toISOString().substring(0, 10),
+  )
   const closeBtnHandler = () => {
     setDayClicked(false)
   }
 
   const saveBtnHandler = () => {
-    savePlanHandler() // Call the savePlanHandler when the "Save" button is clicked
-    closeBtnHandler(false) // Close the popup after saving
+    savePlanHandler()
+    setStartDate(passedDate)
+    closeBtnHandler(false)
   }
 
   return (
     <div className="plan">
       <div className="plan-popup">
-        <h1>{planDate}일 일정 추가</h1>
+        <h1>
+          {calendarYear}년 {calendarMonth}월 {planDate}일 일정 추가
+        </h1>
         <div className="popup-content">
           <input
             type="text"
@@ -53,19 +65,14 @@ export const CalendarPlan: React.FC<CalendarProps> = ({
           />
           <div className="popup-calendar">
             <div className="calendar-period">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  onStartDateChange(e.target.value)
-                }}
-              />
+              <input type="date" value={passedDate} />
             </div>
             <div>~</div>
             <div className="calendar-period">
               <input
                 type="date"
                 value={endDate}
+                min={passedDate}
                 onChange={(e) => {
                   onEndDateChange(e.target.value)
                 }}

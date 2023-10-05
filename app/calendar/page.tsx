@@ -6,7 +6,7 @@ export default function Calendar() {
   return (
     <>
       <Wrapper>
-        <MyCalendar initialYear={2023} initialMonth={8} />{' '}
+        <MyCalendar initialYear={2023} initialMonth={8} />
       </Wrapper>
     </>
   )

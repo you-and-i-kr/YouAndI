@@ -115,7 +115,6 @@ export default function Wrapper({ children }: Props) {
 
         .content {
           flex-grow: 1;
-          display: flex;
           padding: 10px;
           overflow: auto;
         }

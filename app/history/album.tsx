@@ -7,9 +7,7 @@ export interface AlbumProps {
 
 const Album: React.FC<AlbumProps> = ({ images }) => {
   const [contentClicked, setContentClicked] = useState(false)
-  const [clickedContentIndex, setClickedContentIndex] = useState<number | null>(
-    null,
-  )
+  const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
 
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
@@ -34,11 +32,7 @@ const Album: React.FC<AlbumProps> = ({ images }) => {
                       alt={`Image ${index}`}
                     />
                   ) : content.type.startsWith('video/') ? (
-                    <video
-                      controls
-                      src={URL.createObjectURL(content)}
-                      alt={`Video ${index}`}
-                    />
+                    <video controls src={URL.createObjectURL(content)} />
                   ) : null}
                 </div>
               ) : null}

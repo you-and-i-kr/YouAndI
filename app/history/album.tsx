@@ -1,7 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
+import AlbumPopup from './popup'
 
-const Album = ({ images }) => {
-  console.log(images)
+interface ImageData {
+  lastModified: string
+  lastModifiedDate: string
+  name: string
+  size: number
+  type: string
+  webkitRelativePath: string
+}
+
+export interface AlbumProps {
+  images: ImageData[]
+}
+
+const Album: React.FC<AlbumProps> = ({ images }) => {
+  const [contentClicked, setContentClicked] = useState(false)
+  const [clickedContentIndex, setClickedContentIndex] = useState<number | null>(
+    null,
+  )
+
+  const contentClickHandler = (index: number) => {
+    setContentClicked(!contentClicked)
+    setClickedContentIndex(index)
+  }
+
   return (
     <div className="Album">
       <div className="album-grid">
@@ -10,7 +33,10 @@ const Album = ({ images }) => {
             <div key={index} className="content-item">
               {content.type.startsWith('image/') ||
               content.type.startsWith('video/') ? (
-                <div className="media-container">
+                <div
+                  className="media-container"
+                  onClick={() => contentClickHandler(index)}
+                >
                   {content.type.startsWith('image/') ? (
                     <img
                       src={URL.createObjectURL(content)}
@@ -28,6 +54,14 @@ const Album = ({ images }) => {
             </div>
           ))}
       </div>
+      {contentClicked && (
+        <div className="content-popup">
+          <AlbumPopup
+            setContentClicked={setContentClicked}
+            images={images[clickedContentIndex]}
+          />
+        </div>
+      )}
       <style jsx>{`
         .Album {
         }
@@ -42,6 +76,7 @@ const Album = ({ images }) => {
           max-height: 200px;
           max-width: 200px;
           overflow: hidden;
+          position: relative;
         }
 
         .media-container img,
@@ -50,6 +85,16 @@ const Album = ({ images }) => {
           height: 100%;
         }
         .content-item {
+        }
+
+        .content-popup {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          z-index: 1000;
         }
       `}</style>
     </div>

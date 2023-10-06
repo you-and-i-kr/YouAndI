@@ -6,7 +6,6 @@ import Album from './album'
 
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
-  console.log('filer', filter)
   const [images, setImages] = useState([])
   const fileInputRef = useRef(null)
 

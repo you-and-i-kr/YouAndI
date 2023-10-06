@@ -1,49 +1,41 @@
 //2. 일기장 및 앨범 화면
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import Album from './album'
 
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
-  const [images, setImages] = useState([])
-  const fileInputRef = useRef(null)
-
-  useEffect(() => {
-    fileInputRef.current = document.createElement('input')
-    fileInputRef.current.type = 'file'
-    fileInputRef.current.accept = 'image/*'
-    fileInputRef.current.style.display = 'none'
-    fileInputRef.current.multiple = true
-    fileInputRef.current.addEventListener('change', handleImageUpload)
-  }, [])
-
-  const handleFilterChange = (type) => {
+  const [images, setImages] = useState<File[]>([])
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const handleFilterChange = (type: string) => {
     setFilter(type)
   }
 
-  const handleImageUpload = (e) => {
-    const files = e.target.files
-    if (files.length > 0) {
-      const newImages = [...images]
-      for (let i = 0; i < files.length; i++) {
-        newImages.push(files[i])
+  const handleImageUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.files) {
+        return
       }
-      setImages(newImages)
-    }
-  }
+      const files = Array.from(e.target.files)
+      setImages((prevImages) => [...prevImages, ...files])
+    },
+    [],
+  )
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click()
-  }
+  const handleUploadButtonClick = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.click()
+    }
+  }, [])
 
   const filteredImages = images.filter((file) => {
     if (filter === 'all') {
-      return file
+      return true
     } else if (filter === 'photos') {
-      return file.type.startsWith('image/')
+      return file instanceof File && file.type.startsWith('image/')
     } else if (filter === 'videos') {
-      return file.type.startsWith('video/')
+      return file instanceof File && file.type.startsWith('video/')
     }
     return false
   })
@@ -63,7 +55,7 @@ const History = () => {
         <div className="history-wrapper">
           <div className="history-title-con">
             <div className="history-title">{renderFilterButtons()}</div>
-            <button onClick={handleButtonClick}>+</button>
+            <button onClick={handleUploadButtonClick}>+</button>
           </div>
           <input
             type="file"
@@ -71,6 +63,7 @@ const History = () => {
             style={{ display: 'none' }}
             multiple
             onChange={handleImageUpload}
+            ref={inputRef}
             className="imageInput"
           />
           <label htmlFor="imageInput">

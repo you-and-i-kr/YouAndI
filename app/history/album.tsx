@@ -11,7 +11,7 @@ interface ImageData {
 }
 
 export interface AlbumProps {
-  images: ImageData[]
+  images: File[]
 }
 
 const Album: React.FC<AlbumProps> = ({ images }) => {

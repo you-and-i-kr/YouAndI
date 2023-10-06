@@ -1,8 +1,16 @@
 import React from 'react'
 import AlbumComment from './comment'
 
-const AlbumPopup: React.FC = ({ images, setContentClicked }) => {
-  // console.log('넘어온 이미지', images)
+interface AlbumPopupProps {
+  images: File
+  setContentClicked: (value: boolean) => void
+}
+
+const AlbumPopup: React.FC<AlbumPopupProps> = ({
+  images,
+  setContentClicked,
+}) => {
+  console.log('넘어온 이미지', images)
   const closeBtnHandler = () => {
     setContentClicked(false)
   }

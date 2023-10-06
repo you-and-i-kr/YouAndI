@@ -1,15 +1,6 @@
 import React, { useState } from 'react'
 import AlbumPopup from './popup'
 
-interface ImageData {
-  lastModified: string
-  lastModifiedDate: string
-  name: string
-  size: number
-  type: string
-  webkitRelativePath: string
-}
-
 export interface AlbumProps {
   images: File[]
 }

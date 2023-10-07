@@ -6,11 +6,17 @@ import Album from './album'
 
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
-  const [images, setImages] = useState<File[]>([])
+  const [contents, setContents] = useState<File[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null)
   const handleFilterChange = (type: string) => {
     setFilter(type)
   }
+  const contentNumber = contents && contents.length
+
+  const images = contents.filter((file) => file.type.startsWith('image/'))
+  const imagesNumber = images && images.length
+  const videos = contents.filter((file) => file.type.startsWith('video/'))
+  const videosNumber = videos.length
 
   const handleImageUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +24,7 @@ const History = () => {
         return
       }
       const files = Array.from(e.target.files)
-      setImages((prevImages) => [...prevImages, ...files])
+      setContents((prevConents) => [...prevConents, ...files])
     },
     [],
   )
@@ -29,7 +35,7 @@ const History = () => {
     }
   }, [])
 
-  const filteredImages = images.filter((file) => {
+  const filteredImages = contents.filter((file) => {
     if (filter === 'all') {
       return true
     } else if (filter === 'photos') {
@@ -40,23 +46,27 @@ const History = () => {
     return false
   })
 
-  const renderFilterButtons = () => {
-    return (
-      <div className="filter-buttons">
-        <button onClick={() => handleFilterChange('all')}>All</button>
-        <button onClick={() => handleFilterChange('photos')}>Photos</button>
-        <button onClick={() => handleFilterChange('videos')}>Videos</button>
-      </div>
-    )
-  }
   return (
     <Wrapper>
       <div className="History">
         <div className="history-wrapper">
           <div className="history-title-con">
-            <div className="history-title">{renderFilterButtons()}</div>
-            <button onClick={handleUploadButtonClick}>+</button>
+            <div className="filter-buttons">
+              <button onClick={() => handleFilterChange('all')}>
+                All ({contentNumber})
+              </button>
+              <button onClick={() => handleFilterChange('photos')}>
+                Photos ({imagesNumber})
+              </button>
+              <button onClick={() => handleFilterChange('videos')}>
+                Videos ({videosNumber})
+              </button>
+            </div>
+            <div className="history-plus-btn">
+              <button onClick={handleUploadButtonClick}>+</button>
+            </div>
           </div>
+
           <input
             type="file"
             accept="image/*, video/*"
@@ -67,7 +77,7 @@ const History = () => {
             className="imageInput"
           />
           <label htmlFor="imageInput">
-            <Album images={filteredImages} />
+            <Album contents={filteredImages} />
           </label>
         </div>
         <style jsx>{`
@@ -91,9 +101,21 @@ const History = () => {
             display: flex;
             justify-content: space-between;
           }
-          .history-title {
-            display: flex;
-            width: 30%;
+          .filter-buttons {
+            margin-bottom: 30px;
+          }
+
+          .filter-buttons button {
+            border: none;
+            background-color: transparent;
+            font-size: 20px;
+            color: #eeb9be;
+          }
+          .history-plus-btn button {
+            border: none;
+            background-color: transparent;
+            font-size: 30px;
+            color: #eeb9be;
           }
         `}</style>
       </div>

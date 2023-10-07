@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import AlbumPopup from './popup'
 
 export interface AlbumProps {
-  images: File[]
+  contents: File[]
 }
 
-const Album: React.FC<AlbumProps> = ({ images }) => {
+const Album: React.FC<AlbumProps> = ({ contents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
 
@@ -17,8 +17,8 @@ const Album: React.FC<AlbumProps> = ({ images }) => {
   return (
     <div className="Album">
       <div className="album-grid">
-        {images.length > 0 &&
-          images.map((content, index) => (
+        {contents.length > 0 &&
+          contents.map((content, index) => (
             <div key={index} className="content-item">
               {content.type.startsWith('image/') ||
               content.type.startsWith('video/') ? (
@@ -43,7 +43,7 @@ const Album: React.FC<AlbumProps> = ({ images }) => {
         <div className="content-popup">
           <AlbumPopup
             setContentClicked={setContentClicked}
-            images={images[clickedContentIndex]}
+            images={contents[clickedContentIndex]}
           />
         </div>
       )}

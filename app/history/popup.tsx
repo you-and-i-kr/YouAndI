@@ -10,48 +10,49 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
   images,
   setContentClicked,
 }) => {
-  console.log('넘어온 이미지', images)
-  const closeBtnHandler = () => {
-    setContentClicked(false)
-  }
-
   return (
     <div className="AlbumPopup">
       <div className="popup-content">
-        <div>{images.name}</div>
-        <div className="content-img">
-          <img src={URL.createObjectURL(images)} alt={`Image ${images.name}`} />
-        </div>
-        <div className="popup-comment">
-          <AlbumComment />
+        <div className="content-con">
+          <div className="content-img">
+            <img
+              src={URL.createObjectURL(images)}
+              alt={`Image ${images.name}`}
+            />
+          </div>
         </div>
       </div>
-      <div className="popup-btn">
-        <button
-          onClick={() => {
-            closeBtnHandler()
-          }}
-        >
-          Close
-        </button>
+      <div className="popup-comment">
+        <AlbumComment setContentClicked={setContentClicked} />
       </div>
-
       <style jsx>
         {`
           .AlbumPopup {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             width: 100%;
             height: 100%;
           }
+
           .popup-content {
             width: 50%;
-            height: 50%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+          }
+
+          .content-con {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+          }
+          .content-name {
+            margin-bottom: 20px;
+          }
+          .content-name {
+            color: white;
           }
           .content-img {
             max-height: 500px;

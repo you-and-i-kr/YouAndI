@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import '../myCalenar/myCalendar.css'
-import CalendarPlan from '../calendarPlan/calendarPlan'
-import CalendarWithContent from '../calendarWithContent/calendarWithContent'
+import CalendarPlan from '../calendar/calendarPlan'
+import CalendarWithContent from '../calendar/calendarWithContent'
 
 interface CalendarProps {
   initialYear: number

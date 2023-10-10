@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import '../calendarPlan/calendarPlan.css'
+import React, { useState } from 'react'
 
 export interface CalendarProps {
   setDayClicked: () => void
@@ -105,6 +104,69 @@ export const CalendarPlan: React.FC<CalendarProps> = ({
           </button>
         </div>
       </div>
+      <style jsx>{`
+        .plan {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .plan-popup {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          width: 50%;
+          height: 80%;
+          text-align: center;
+        }
+
+        .popup h1 {
+          margin-bottom: 10px;
+          font-weight: 700;
+        }
+
+        .popup-content {
+          width: 50%;
+          height: 70%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+        }
+
+        .popup-calendar {
+          display: flex;
+        }
+        .calendar-period {
+          display: flex;
+          align-content: center;
+        }
+
+        .calendar-period {
+          display: flex;
+          align-items: center;
+        }
+        input {
+          margin-bottom: 20px;
+        }
+        .popup-btn {
+          width: 20%;
+          justify-content: space-between;
+          display: flex;
+        }
+      `}</style>
     </div>
   )
 }

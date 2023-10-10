@@ -11,7 +11,6 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record }) => {
     setCommentDelete(!comentDelete)
   }
 
-  console.log(setCommentDelete)
   const commentDeleteBtn = () => {}
   return (
     <div>

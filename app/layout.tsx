@@ -1,7 +1,7 @@
 import './globals.css'
-import StyledJsxRegistry from './registry'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import StyledJsxRegistry from './registry'
 
 import Header from './components/Header'
 

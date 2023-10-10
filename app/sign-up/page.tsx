@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 
-import DatePicker from 'react-datepicker'
+// import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -15,7 +15,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('')
   const [phoneNumber1, setPhoneNumber1] = useState('')
   const [phoneNumber2, setPhoneNumber2] = useState('')
-  const [startDate, setStartDate] = useState(new Date())
+  // const [startDate, setStartDate] = useState(new Date())
   const [diaryNm, setDiaryNm] = useState('유앤아이')
 
   //오류메시지 상태저장
@@ -23,69 +23,82 @@ export default function SignUp() {
   const [passwordMessage, setPasswordMessage] = useState('')
   const [phoneNumber1Message, setPhoneNumber1Message] = useState('')
   const [phoneNumber2Message, setPhoneNumber2Message] = useState('')
-  const [diaryNmMessage, setDiaryNmMessage] = useState('')
+  // const [diaryNmMessage, setDiaryNmMessage] = useState('')
 
   // 이메일 유효성 검사
-  const onEmailChange = useCallback((e) => {
-    const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/
+  const onEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const emailRegex =
+        /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/
 
-    const emailCurrent = e.target.value
-    setEmail(emailCurrent)
+      const emailCurrent = e.target.value
+      setEmail(emailCurrent)
 
-    if (!emailRegex.test(emailCurrent)) {
-      setEmailMessage('이메일 형식이 틀렸습니다.')
-    } else {
-      setEmailMessage('')
-    }
-  }, [])
+      if (!emailRegex.test(emailCurrent)) {
+        setEmailMessage('이메일 형식이 틀렸습니다.')
+      } else {
+        setEmailMessage('')
+      }
+    },
+    [],
+  )
 
   // 비밀번호 유효성 검사
-  const onPasswordChange = useCallback((e) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
-    const passwordCurrent = e.target.value
-    setPassword(passwordCurrent)
+  const onPasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const passwordRegex =
+        /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
+      const passwordCurrent = e.target.value
+      setPassword(passwordCurrent)
 
-    if (!passwordRegex.test(passwordCurrent)) {
-      setPasswordMessage(
-        '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!',
-      )
-    } else {
-      setPasswordMessage('')
-    }
-  }, [])
+      if (!passwordRegex.test(passwordCurrent)) {
+        setPasswordMessage(
+          '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!',
+        )
+      } else {
+        setPasswordMessage('')
+      }
+    },
+    [],
+  )
 
   // 전화번호 유효성 검사
-  const onPhoneNuberChange = useCallback((e, num) => {
-    const phoneNuberRegex = /^010([0-9]{4})([0-9]{4})$/
+  const onPhoneNuberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, num: string) => {
+      const phoneNuberRegex = /^010([0-9]{4})([0-9]{4})$/
 
-    const phoneNumberCurrent = e.target.value
+      const phoneNumberCurrent = e.target.value
 
-    if (num === 'num1') {
-      setPhoneNumber1(phoneNumberCurrent)
+      if (num === 'num1') {
+        setPhoneNumber1(phoneNumberCurrent)
 
-      if (!phoneNuberRegex.test(phoneNumberCurrent)) {
-        setPhoneNumber1Message('전화번호 형식을 확인해주세요')
-      } else {
-        setPhoneNumber1Message('')
+        if (!phoneNuberRegex.test(phoneNumberCurrent)) {
+          setPhoneNumber1Message('전화번호 형식을 확인해주세요')
+        } else {
+          setPhoneNumber1Message('')
+        }
       }
-    }
 
-    if (num === 'num2') {
-      setPhoneNumber2(phoneNumberCurrent)
+      if (num === 'num2') {
+        setPhoneNumber2(phoneNumberCurrent)
 
-      if (!phoneNuberRegex.test(phoneNumberCurrent)) {
-        setPhoneNumber2Message('전화번호 형식을 확인해주세요')
-      } else {
-        setPhoneNumber2Message('')
+        if (!phoneNuberRegex.test(phoneNumberCurrent)) {
+          setPhoneNumber2Message('전화번호 형식을 확인해주세요')
+        } else {
+          setPhoneNumber2Message('')
+        }
       }
-    }
-  }, [])
+    },
+    [],
+  )
 
   // 다이어리 이름 변경
-  const handleDiaryNmChange = useCallback((e) => {
-    setDiaryNm(e.target.value)
-  }, [])
+  const handleDiaryNmChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDiaryNm(e.target.value)
+    },
+    [],
+  )
 
   const handleSubmit = useCallback(() => {}, [])
 
@@ -116,7 +129,12 @@ export default function SignUp() {
             <button
               className="next-btn"
               onClick={() => setStep(2)}
-              disabled={!email || !password || emailMessage || passwordMessage}
+              disabled={
+                !email ||
+                !password ||
+                emailMessage !== '' ||
+                passwordMessage !== ''
+              }
             >
               다음 단계
             </button>
@@ -156,8 +174,8 @@ export default function SignUp() {
               disabled={
                 !phoneNumber1 ||
                 !phoneNumber2 ||
-                phoneNumber1Message ||
-                phoneNumber2Message
+                phoneNumber1Message !== '' ||
+                phoneNumber2Message !== ''
               }
             >
               다음 단계
@@ -170,11 +188,11 @@ export default function SignUp() {
             <p>3) 가입을 위한 정보를 입력해 주세요.</p>
             <div className="inputs">
               {/* <input placeholder="데이트 시작일" value={startDate} /> */}
-              <DatePicker
+              {/* <DatePicker
                 dateFormat="yyyy.MM.dd"
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
-              />
+              /> */}
               <input
                 placeholder="기록장 이름"
                 value={diaryNm}

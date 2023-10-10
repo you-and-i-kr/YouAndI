@@ -13,9 +13,12 @@ export default function SignIn() {
 
   const [errorMessage, setErrorMessage] = useState('')
 
-  const handleInputForOnlyNumber = useCallback((e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '')
-  }, [])
+  const handleInputForOnlyNumber = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '')
+    },
+    [],
+  )
 
   const handleLogin = useCallback(() => {
     setErrorMessage(

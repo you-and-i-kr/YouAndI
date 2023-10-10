@@ -14,7 +14,7 @@ export interface Comment {
 const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
   const [comment, setComment] = useState('')
   const [record, setRecord] = useState<Comment[]>([])
-  console.log('comment', comment, 'record', record)
+  // console.log('주는쪽', record)
 
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
@@ -46,7 +46,7 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
           value={comment}
           onChange={handleCommentChange}
         />
-        <CommentRecord record={record} />
+        <CommentRecord record={record} setRecord={setRecord} />
         <div className="comment-btn">
           <button
             onClick={() => {

@@ -1,21 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Comment } from './comment'
 
 interface CommentRecordProps {
+  setRecord: (value: Comment[]) => void
   record: Comment[]
 }
 
-const CommentRecord: React.FC<CommentRecordProps> = ({ record }) => {
-  const [comentDelete, setCommentDelete] = useState(false)
-  const deleteHandler = () => {
-    setCommentDelete(!comentDelete)
+const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
+  const [commentoDelete, setCommentDelete] = useState<number | null>(null)
+  const deleteHandler = (index: number) => {
+    setCommentDelete(index)
+  }
+  // console.log('받아온거', record)
+
+  const deleteComment = () => {
+    if (commentoDelete !== null) {
+      const updatedComments = record.filter(
+        (_, index) => index !== commentoDelete,
+      )
+      setRecord(updatedComments)
+      setCommentDelete(null)
+    }
   }
 
-  const commentDeleteBtn = () => {}
   return (
     <div>
-      {record.map((comment) => (
-        <div className="comment-records">
+      {record.map((comment, index) => (
+        <div className="comment-records" key={index}>
           <div className="comment-record-con">
             <div className="comment-record-text">{comment.text}</div>
             <div className="comment-record-timestamp">{comment.timestamp}</div>
@@ -23,12 +34,16 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record }) => {
           <button
             className="comment-record-delete-btn"
             onClick={() => {
-              deleteHandler()
+              deleteHandler(index)
             }}
           >
             :
           </button>
-          {comentDelete && <div className="delete-btn-content">삭제</div>}
+          {commentoDelete === index && (
+            <div className="delete-btn-content" onClick={deleteComment}>
+              삭제
+            </div>
+          )}
         </div>
       ))}
       <style jsx>

@@ -1,6 +1,6 @@
 //2. 일기장 및 앨범 화면
 'use client'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import Album from './album'
 

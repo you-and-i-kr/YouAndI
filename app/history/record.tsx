@@ -24,7 +24,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
   }
 
   return (
-    <div>
+    <div className="records">
       {record.map((comment, index) => (
         <div className="comment-records" key={index}>
           <div className="comment-record-con">
@@ -50,6 +50,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
         {`
           .comment-records {
             display: flex;
+            margin-bottom: 20px;
           }
           .comment-record-con {
             display: flex;

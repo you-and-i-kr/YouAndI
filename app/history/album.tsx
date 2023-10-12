@@ -43,7 +43,7 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
         <div className="content-popup">
           <AlbumPopup
             setContentClicked={setContentClicked}
-            images={contents[clickedContentIndex]}
+            contents={contents[clickedContentIndex]}
           />
         </div>
       )}

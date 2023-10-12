@@ -2,23 +2,25 @@ import React from 'react'
 import AlbumComment from './comment'
 
 interface AlbumPopupProps {
-  images: File
+  contents: File
   setContentClicked: (value: boolean) => void
 }
 
 const AlbumPopup: React.FC<AlbumPopupProps> = ({
-  images,
+  contents,
   setContentClicked,
 }) => {
+  console.log(contents)
   return (
     <div className="AlbumPopup">
       <div className="popup-content">
         <div className="content-con">
           <div className="content-img">
-            <img
-              src={URL.createObjectURL(images)}
-              alt={`Image ${images.name}`}
-            />
+            {contents.type.startsWith('image/') ? (
+              <img src={URL.createObjectURL(contents)} alt={contents.name} />
+            ) : contents.type.startsWith('video/') ? (
+              <video controls src={URL.createObjectURL(contents)} />
+            ) : null}
           </div>
         </div>
       </div>

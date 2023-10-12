@@ -46,7 +46,9 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
           value={comment}
           onChange={handleCommentChange}
         />
-        <CommentRecord record={record} setRecord={setRecord} />
+        <div className="comment-record-component">
+          <CommentRecord record={record} setRecord={setRecord} />
+        </div>
         <div className="comment-btn">
           <button
             onClick={() => {
@@ -72,7 +74,15 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
           height: 70%;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: flex-start;
+        }
+
+        .comment-container textarea {
+          margin-bottom: 20px;
+        }
+
+        .comment-record-component {
+          height: 80%;
         }
 
         .comment-btn {

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import PlanPopup from './planPopup'
+import SetPopup from './setPopup'
 
 interface CalendarProps {
   initialYear: number
@@ -20,10 +21,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
 
   const [selectedDay, setSelectedDay] = useState('')
   const [plans, setPlans] = useState([])
-  const [isPopupOpen, setPopupOpen] = useState(false)
-  const [editPlan, setEditPlan] = useState(null)
-
   console.log(plans)
+  const [isPopupOpen, setPopupOpen] = useState(false)
+  const [isSetPopupOpen, setSetPopupOpen] = useState(false)
+  const [editPlan, setEditPlan] = useState(null)
 
   const generateCalendar = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1)
@@ -67,6 +68,9 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setPopupOpen(true)
   }
 
+  const openSetPopup = () => {
+    setSetPopupOpen(!isSetPopupOpen)
+  }
   const closePopup = () => {
     setSelectedDay('')
     setPopupOpen(false)
@@ -94,7 +98,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
       <div className="calendar">
         {daysInMonth.map((day, index) => {
           const currentDay = `${year}-${month + 1}-${day}`
-          const planForDay = plans.find(
+          const planForDay = plans.filter(
             (plan) =>
               plan.startDate <= currentDay && plan.endDate >= currentDay,
           )
@@ -104,7 +108,12 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
               <div className="cells-days" onClick={() => openPopup(currentDay)}>
                 {day}
               </div>
-              {planForDay && <div>{planForDay.title}</div>}
+              {planForDay &&
+                planForDay.map((plan, subIndex) => (
+                  <div key={subIndex} onClick={() => openSetPopup()}>
+                    {plan.title}
+                  </div>
+                ))}
             </div>
           )
         })}
@@ -127,6 +136,11 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             selectedDay={selectedDay}
             plan={editPlan}
           />
+        </div>
+      )}
+      {isSetPopupOpen && (
+        <div className="calendar-popup">
+          <SetPopup />
         </div>
       )}
       <style jsx>{`

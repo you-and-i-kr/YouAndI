@@ -35,7 +35,7 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <h2>{plan ? 'Edit Plan' : 'Create Plan'}</h2>
+        <h2>일정 추가</h2>
         <input
           type="text"
           placeholder="Title"

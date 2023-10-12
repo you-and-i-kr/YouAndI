@@ -20,9 +20,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
 
   const [selectedDay, setSelectedDay] = useState('')
   const [plans, setPlans] = useState([])
-  console.log(plans)
   const [isPopupOpen, setPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState(null)
+
+  console.log(plans)
 
   const generateCalendar = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1)
@@ -102,8 +103,8 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             <div key={index} className="calendar-cells">
               <div className="cells-days" onClick={() => openPopup(currentDay)}>
                 {day}
-                {planForDay && <div>{planForDay.title}</div>}
               </div>
+              {planForDay && <div>{planForDay.title}</div>}
             </div>
           )
         })}

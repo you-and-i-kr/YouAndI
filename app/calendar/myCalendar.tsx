@@ -20,11 +20,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [month, setMonth] = useState(initialMonth)
 
   const [selectedDay, setSelectedDay] = useState('')
-  const [plans, setPlans] = useState([])
-  console.log(plans)
+  const [plans, setPlans] = useState<PlanContent[]>([])
   const [isPopupOpen, setPopupOpen] = useState(false)
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
-  const [editPlan, setEditPlan] = useState(null)
+  const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
 
   const generateCalendar = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1)
@@ -57,13 +56,13 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     }
   }
 
-  const openPopup = (day) => {
+  const openPopup = (day: string) => {
     setEditPlan(null)
     setSelectedDay(day)
     setPopupOpen(!isPopupOpen)
   }
 
-  const openEditPopup = (plan) => {
+  const openEditPopup = (plan: PlanContent) => {
     setEditPlan(plan)
     setPopupOpen(true)
   }
@@ -75,9 +74,9 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setSelectedDay('')
     setPopupOpen(false)
   }
-  const handleSavePlan = (newPlan) => {
+  const handleSavePlan = (newPlan: PlanContent) => {
     const updatedPlans = plans.filter(
-      (plan) => plan.startDate !== newPlan.startDate,
+      (plan: PlanContent) => plan.startDate !== newPlan.startDate,
     )
     updatedPlans.push(newPlan)
     setPlans(updatedPlans)
@@ -99,7 +98,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
         {daysInMonth.map((day, index) => {
           const currentDay = `${year}-${month + 1}-${day}`
           const planForDay = plans.filter(
-            (plan) =>
+            (plan: PlanContent) =>
               plan.startDate <= currentDay && plan.endDate >= currentDay,
           )
 
@@ -109,7 +108,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
                 {day}
               </div>
               {planForDay &&
-                planForDay.map((plan, subIndex) => (
+                planForDay.map((plan: PlanContent, subIndex) => (
                   <div key={subIndex} onClick={() => openSetPopup()}>
                     {plan.title}
                   </div>
@@ -124,7 +123,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             onClose={closePopup}
             onSave={(newPlan) => {
               if (editPlan) {
-                const updatedPlans = plans.map((plan) =>
+                const updatedPlans = plans.map((plan: PlanContent) =>
                   plan.startDate === editPlan.startDate ? newPlan : plan,
                 )
                 setPlans(updatedPlans)

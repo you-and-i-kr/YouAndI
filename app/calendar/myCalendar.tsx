@@ -24,6 +24,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [isPopupOpen, setPopupOpen] = useState(false)
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
+  const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
 
   const generateCalendar = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1)
@@ -56,23 +57,37 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     }
   }
 
+  const onDelete = () => {
+    if (setPopupPlan) {
+      const updatedPlans = plans.filter((plan) => {
+        return (
+          plan.title !== setPopupPlan.title ||
+          plan.startDate !== setPopupPlan.startDate ||
+          plan.endDate !== setPopupPlan.endDate ||
+          plan.memo !== setPopupPlan.memo
+        )
+      })
+
+      setPlans(updatedPlans)
+      closePopup()
+    }
+  }
+
   const openPopup = (day: string) => {
     setEditPlan(null)
     setSelectedDay(day)
     setPopupOpen(!isPopupOpen)
   }
 
-  const openEditPopup = (plan: PlanContent) => {
-    setEditPlan(plan)
-    setPopupOpen(true)
-  }
-
-  const openSetPopup = () => {
+  const openSetPopup = (plan: PlanContent) => {
+    setSelectedDay(selectedDay)
+    setSetPopupPlan(plan)
     setSetPopupOpen(!isSetPopupOpen)
   }
   const closePopup = () => {
     setSelectedDay('')
     setPopupOpen(false)
+    setSetPopupOpen(false)
   }
   const handleSavePlan = (newPlan: PlanContent) => {
     const updatedPlans = plans.filter(
@@ -109,7 +124,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
               </div>
               {planForDay &&
                 planForDay.map((plan: PlanContent, subIndex) => (
-                  <div key={subIndex} onClick={() => openSetPopup()}>
+                  <div key={subIndex} onClick={() => openSetPopup(plan)}>
                     {plan.title}
                   </div>
                 ))}
@@ -137,9 +152,14 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
           />
         </div>
       )}
-      {isSetPopupOpen && (
+      {isSetPopupOpen && setPopupPlan && (
         <div className="calendar-popup">
-          <SetPopup />
+          <SetPopup
+            onClose={closePopup}
+            onDelete={onDelete}
+            plan={setPopupPlan}
+            onSave={handleSavePlan}
+          />
         </div>
       )}
       <style jsx>{`

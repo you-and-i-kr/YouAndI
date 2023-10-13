@@ -27,7 +27,6 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
 
   const generateCalendar = (year: number, month: number) => {
-    const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
     const days: number[] = []
 

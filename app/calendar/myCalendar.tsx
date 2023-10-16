@@ -89,9 +89,14 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setSetPopupOpen(false)
   }
   const handleSavePlan = (newPlan: PlanContent) => {
-    const updatedPlans = plans.filter(
-      (plan: PlanContent) => plan.startDate !== newPlan.startDate,
-    )
+    const updatedPlans = plans.filter((plan: PlanContent) => {
+      return (
+        plan.title !== setPopupPlan?.title ||
+        plan.startDate !== setPopupPlan?.startDate ||
+        plan.endDate !== setPopupPlan?.endDate ||
+        plan.memo !== setPopupPlan?.memo
+      )
+    })
     updatedPlans.push(newPlan)
     setPlans(updatedPlans)
   }
@@ -124,7 +129,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
               {planForDay &&
                 planForDay.map((plan: PlanContent, subIndex) => (
                   <div key={subIndex} onClick={() => openSetPopup(plan)}>
-                    {plan.title}
+                    *{plan.title}
                   </div>
                 ))}
             </div>
@@ -198,6 +203,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
           padding: 10px;
           border: 1px solid #ccc;
           background-color: #fff;
+          height: 100px;
         }
 
         .cells-days {

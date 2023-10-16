@@ -31,7 +31,7 @@ export default function Home() {
 
         {/* main */}
         <main className="home-main">
-          {/* 프로필 사진 & counting */}
+          {/* 프로필 사진 & Link */}
           <div className="home-main__profile">
             <div className="home-main__image-wrapper">
               <img

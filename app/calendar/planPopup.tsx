@@ -37,31 +37,45 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <h2>일정 추가</h2>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          min={minDateString}
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          min={minDateString}
-        />
-        <textarea
-          placeholder="Memo"
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
-        />
-        <button onClick={handleSave}>Save Plan</button>
+        <div className="content-type">일정</div>
+        <div className="content-element-box">
+          <input
+            className="elements"
+            type="text"
+            placeholder="제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <div className="content-date-box">
+            <input
+              className="elements"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={minDateString}
+            />
+            <input
+              className="elements"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              min={minDateString}
+            />
+          </div>
+          <div className="elements-line"></div>
+
+          <div className="elements">메모</div>
+          <textarea
+            placeholder="메모를 입력하세요"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+          />
+          <div className="content-button-box">
+            <button className="content-button" onClick={handleSave}>
+              저장
+            </button>
+          </div>
+        </div>
       </div>
       <style jsx>{`
         .modal {
@@ -73,22 +87,78 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
         }
 
         .modal-content {
-          width: 50%;
+          position: relative;
+          width: 40%;
           height: 60%;
+          background-color: white;
+          color: black;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
         }
 
-        .modal-content h2 {
-          color: white;
+        .content-type {
+          color: #eeb9be;
+          font-weight: 700;
+          font-size: 20px;
+          margin-top: 30px;
         }
-        .modal-content input {
+        .content-element-box {
+          position: relative;
+          width: 65%;
+          height: 80%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .content-element-box  textarea {
           border: none;
+          background-color: #f7f7f7;
+
         }
-        .modal-content input:focus {
-          outline: none;
+
+        .content-date-box {
+          width: 100%
+          display: flex;
+          flex-direction: column;
+        }
+
+        .elements-line {
+            width: 100%;
+            border-bottom: 2px solid #F7F7F7;
+            margin-bottom: 20px;
+          }
+
+        .elements {
+          color: black;
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+
+        .modal-content input  {
+          border: none;
+          background-color: #f7f7f7;
+          font-size: 14px;
+        }
+       
+      
+        .close {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+        }
+        .content-button-box {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+        .content-button{
+          position: absolute;
+          bottom: 50px;
+          border: none;
+          background-color: #f7f7f7;
         }
       `}</style>
     </div>

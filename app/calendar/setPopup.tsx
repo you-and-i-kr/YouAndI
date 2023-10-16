@@ -93,8 +93,8 @@ const SetPopup: React.FC<SetPopupProps> = ({
             </div>
           ) : (
             <div className="elements-buttons">
-              <button onClick={handleEdit}>Edit</button>
-              <button onClick={onDelete}>Delete</button>
+              <button onClick={handleEdit}>수정</button>
+              <button onClick={onDelete}>삭제</button>
             </div>
           )}
         </div>
@@ -145,10 +145,12 @@ const SetPopup: React.FC<SetPopupProps> = ({
           }
 
           .content-element textarea {
-           border: 1px solid #F7F7F7;;
+            border: none;
+            background-color: #f7f7f7;
           }
           .content-element input {
-            border: 1px solid #F7F7F7;;
+            border: none;
+            background-color: #f7f7f7;
           }
 
           .elements {

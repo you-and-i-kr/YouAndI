@@ -105,7 +105,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     <div className="MyCalendar">
       <div className="calendar-button">
         <button onClick={goToPreviousMonth}>Previous</button>
-        <div>{`${year}-${month + 1}`}</div>
+        <div className="calendar-yearmonth">{`${year}-${month + 1}`}</div>
         <button onClick={goToNextMonth}>Next</button>
       </div>
       <div className="day-labels">
@@ -131,8 +131,12 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
               </div>
               {planForDay &&
                 planForDay.map((plan: PlanContent, subIndex) => (
-                  <div key={subIndex} onClick={() => openSetPopup(plan)}>
-                    *{plan.title}
+                  <div
+                    className="cells-title"
+                    key={subIndex}
+                    onClick={() => openSetPopup(plan)}
+                  >
+                    ▪️{plan.title}
                   </div>
                 ))}
             </div>
@@ -180,6 +184,15 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
           width: 100%;
           margin: 10px 0 10px 0;
         }
+        .calendar-yearmonth {
+          font-weight: 700;
+        }
+
+        .calendar-button button {
+          border: none;
+          background-color: #f7f7f7;
+          font-weight: 600;
+        }
         .day-labels {
           width: 100%;
           display: flex;
@@ -207,6 +220,11 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
           border: 1px solid #ccc;
           background-color: #fff;
           height: 100px;
+        }
+
+        .cells-title {
+          margin-top: 10px;
+          font-size: 12px;
         }
 
         .cells-days {

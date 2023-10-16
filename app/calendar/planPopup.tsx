@@ -21,8 +21,10 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
 
   const minDate = new Date(selectedDay)
   minDate.setDate(minDate.getDate())
-  const minDateString = minDate.toISOString().split('T')[0]
-  //1의 자리수 날짜에는 지금 적용안되고 있음 나중에 고칠 것
+  const year = minDate.getFullYear()
+  const month = String(minDate.getMonth() + 1).padStart(2, '0')
+  const day = String(minDate.getDate()).padStart(2, '0')
+  const minDateString = `${year}-${month}-${day}`
 
   const handleSave = () => {
     onSave({ title, startDate, endDate, memo })

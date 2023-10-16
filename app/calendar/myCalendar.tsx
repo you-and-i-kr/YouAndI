@@ -21,6 +21,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
 
   const [selectedDay, setSelectedDay] = useState('')
   const [plans, setPlans] = useState<PlanContent[]>([])
+  console.log(plans)
   const [isPopupOpen, setPopupOpen] = useState(false)
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
@@ -29,7 +30,6 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const generateCalendar = (year: number, month: number) => {
     const lastDay = new Date(year, month + 1, 0)
     const days: number[] = []
-
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(i)
     }
@@ -88,7 +88,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setPopupOpen(false)
     setSetPopupOpen(false)
   }
-  const handleSavePlan = (newPlan: PlanContent) => {
+  const handleEditSavePlan = (newPlan: PlanContent) => {
     const updatedPlans = plans.filter((plan: PlanContent) => {
       return (
         plan.title !== setPopupPlan?.title ||
@@ -115,7 +115,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
       </div>
       <div className="calendar">
         {daysInMonth.map((day, index) => {
-          const currentDay = `${year}-${month + 1}-${day}`
+          const currentDay = `${year}-${String(month + 1).padStart(
+            2,
+            '0',
+          )}-${String(day).padStart(2, '0')}`
           const planForDay = plans.filter(
             (plan: PlanContent) =>
               plan.startDate <= currentDay && plan.endDate >= currentDay,
@@ -162,7 +165,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             onClose={closePopup}
             onDelete={onDelete}
             plan={setPopupPlan}
-            onSave={handleSavePlan}
+            onSave={handleEditSavePlan}
           />
         </div>
       )}

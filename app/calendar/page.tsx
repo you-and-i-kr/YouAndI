@@ -1,16 +1,12 @@
 import Wrapper from '../components/Wrapper'
-import MyCalendar from './myCalendar'
+import MyCalendar from '../myCalenar/page'
 
 //3. 캘린더화면
 export default function Calendar() {
-  const currentDate = new Date()
-
-  const initialYear = currentDate.getFullYear()
-  const initialMonth = currentDate.getMonth()
   return (
     <>
       <Wrapper>
-        <MyCalendar initialYear={initialYear} initialMonth={initialMonth} />
+        <MyCalendar initialYear={2023} initialMonth={8} />
       </Wrapper>
     </>
   )

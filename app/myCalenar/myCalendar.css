@@ -1,0 +1,49 @@
+.MyCalendar {
+  width: 100%;
+}
+.calendar-button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 10px 0 10px 0;
+}
+.day-labels {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background-color: #f0f0f0;
+  font-weight: bold;
+  padding: 8px 0 8px 0;
+}
+
+.calendar {
+  display: grid;
+  width: 100%;
+  height: 80%;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-cells {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.cells-days {
+}
+/* 
+.calendar div {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: center;
+} */
+.calendar-plan-popup {
+  width: 100%;
+  height: 100%;
+}

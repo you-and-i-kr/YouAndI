@@ -51,14 +51,21 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
       ))}
       <style jsx>
         {`
-          .comment-records {
+        .record {
+          width: 100%;
+          height: 100%;
+        }
+          .comment-records { 
+            position: relative;
+            width: 100%;
             display: flex;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin: 10px 0 10px 0;
           }
-          .comment-record-con {
+          .comment-record-con {            
             display: flex;
             flex-direction: column;
-            color: white;
+            color: black
           }
           .comment-record-text {
             font-size: 15px;
@@ -71,10 +78,13 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
             border: none;
             background-color: transparent;
             font-size: 15px;
-            color: white;
+            color: black
           }
           .delete-btn-content {
-            color: white;
+            position: absolute;
+            right: 0;
+            
+            color: black
             font-size: 15px;
           }
         `}

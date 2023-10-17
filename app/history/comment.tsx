@@ -46,28 +46,39 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
 
   return (
     <div className="AlbumComment">
+      <div className="delete-btn-box">
+        <button
+          className="delete-btn"
+          onClick={() => {
+            closeBtnHandler()
+          }}
+        >
+          𝖷
+        </button>
+      </div>
       <div className="comment-container">
-        <textarea
-          placeholder="댓글을 작성해주세요"
-          value={comment}
-          onChange={handleCommentChange}
-        />
         <div className="comment-record-component">
           <CommentRecord comments={comments} setComments={setComments} />
         </div>
-        <div className="comment-btn">
+        <div className="record-writing-box">
+          <textarea
+            className="comment-record-textarea"
+            placeholder="댓글 달기"
+            value={comment}
+            onChange={handleCommentChange}
+          />
           <button
-            onClick={() => {
-              closeBtnHandler()
-            }}
+            className="writing-box-btn
+          "
+            onClick={handleSubmit}
           >
-            Close
+            ⬆
           </button>
-          <button onClick={handleSubmit}>Submit</button>
         </div>
       </div>
       <style jsx>{`
         .AlbumComment {
+          position: relative;
           width: 100%;
           height: 100%;
           display: flex;
@@ -78,23 +89,56 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
         .comment-container {
           width: 100%;
           height: 70%;
+          background-color: white;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
-        }
-
-        .comment-container textarea {
-          margin-bottom: 20px;
+          align-items: center;
         }
 
         .comment-record-component {
+          width: 80%;
           height: 80%;
+          overflow: scroll;
+        }
+        .record-writing-box {
+          display: flex;
+          width: 80%;
+          height: 8%;
+          align-items: center;
+          justify-content: center;
+          background-color: #ecedf1;
+          border-radius: 30px;
+        }
+        .writing-box-btn {
+          width: 30px;
+          height: 30px;
+          border-radius: 50px;
+          border: none;
+          color: white;
+          background-color: #de5a7b;
+        }
+        .comment-record-textarea {
+          border: none;
+          width: 85%;
+          height: 100%;
+          line-height: 30px;
+          height: 30px;
+          background-color: transparent;
         }
 
-        .comment-btn {
-          width: 100%;
+        .delete-btn-box {
+          position: absolute;
+          top: 80px;
+          right: 0;
           display: flex;
           justify-content: space-between;
+        }
+        .delete-btn {
+          font-size: 20px;
+          color: white;
+          border: none;
+          background-color: transparent;
         }
       `}</style>
     </div>

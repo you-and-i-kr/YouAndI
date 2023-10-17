@@ -45,7 +45,6 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           }
 
           .popup-content {
-            width: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -75,6 +74,7 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           }
 
           .popup-comment {
+            width: 30%;
             height: 100%;
             display: flex;
             justify-content: flex-start;

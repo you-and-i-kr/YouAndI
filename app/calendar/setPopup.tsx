@@ -59,6 +59,7 @@ const SetPopup: React.FC<SetPopupProps> = ({
                   setEditedPlan({ ...editedPlan, startDate: e.target.value })
                 }
               />
+              ~
               <input
                 className="elements"
                 type="date"
@@ -88,8 +89,8 @@ const SetPopup: React.FC<SetPopupProps> = ({
           )}
           {editMode ? (
             <div className="elements-buttons">
-              <button onClick={handleSave}>Save</button>
-              <button onClick={() => setEditMode(false)}>Cancel</button>
+              <button onClick={handleSave}>저장</button>
+              <button onClick={() => setEditMode(false)}>취소</button>
             </div>
           ) : (
             <div className="elements-buttons">
@@ -172,9 +173,9 @@ const SetPopup: React.FC<SetPopupProps> = ({
             
           }
           .elements-edit-date {
-            width: 100%;
+            width: 70%;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
 
           }
 

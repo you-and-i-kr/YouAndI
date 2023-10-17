@@ -54,6 +54,7 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
               onChange={(e) => setStartDate(e.target.value)}
               min={minDateString}
             />
+            ~
             <input
               className="elements"
               type="date"
@@ -113,23 +114,22 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
           align-items: flex-start;
         }
 
-        .content-element-box  textarea {
+        .content-element-box textarea {
           border: none;
           background-color: #f7f7f7;
-
         }
 
         .content-date-box {
-          width: 100%
+          width: 70%;
           display: flex;
-          flex-direction: column;
+          justify-content: space-between;
         }
 
         .elements-line {
-            width: 100%;
-            border-bottom: 2px solid #F7F7F7;
-            margin-bottom: 20px;
-          }
+          width: 100%;
+          border-bottom: 2px solid #f7f7f7;
+          margin-bottom: 20px;
+        }
 
         .elements {
           color: black;
@@ -137,13 +137,12 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
           margin-bottom: 20px;
         }
 
-        .modal-content input  {
+        .modal-content input {
           border: none;
           background-color: #f7f7f7;
           font-size: 14px;
         }
-       
-      
+
         .close {
           position: absolute;
           top: 10px;
@@ -154,7 +153,7 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
           display: flex;
           justify-content: center;
         }
-        .content-button{
+        .content-button {
           position: absolute;
           bottom: 50px;
           border: none;

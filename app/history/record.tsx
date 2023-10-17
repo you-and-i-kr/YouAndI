@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Comment } from './comment'
 
 interface CommentRecordProps {
@@ -26,6 +26,22 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
     }
   }
 
+  useEffect(() => {
+    const handleDocumentClick = (e: MouseEvent) => {
+      if (
+        commentoDelete !== null &&
+        e.target instanceof Element &&
+        !e.target.classList.contains('comment-record-delete-btn')
+      ) {
+        setCommentDelete(null)
+      }
+    }
+    document.addEventListener('click', handleDocumentClick)
+    return () => {
+      document.removeEventListener('click', handleDocumentClick)
+    }
+  }, [commentoDelete])
+
   return (
     <div className="records">
       {comments.map((comment, index) => (
@@ -44,7 +60,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
             :
           </button>
           {commentoDelete === index && (
-            <div className="delete-btn-content" onClick={deleteComment}>
+            <div className="delete-btn-comment" onClick={deleteComment}>
               삭제
             </div>
           )}
@@ -52,21 +68,21 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
       ))}
       <style jsx>
         {`
-        .record {
-          width: 100%;
-          height: 100%;
-        }
-          .comment-records { 
-            position: relative;
+          .record {
+            width: 100%;
+            height: 100%;
+          }
+          .comment-records {
             width: 100%;
             display: flex;
             justify-content: space-between;
             margin: 20px 0 20px 0;
           }
-          .comment-record-con {            
+          .comment-record-con {
+            position: relative;
             display: flex;
             flex-direction: column;
-            color: black
+            color: black;
           }
           .comment-record-text {
             font-size: 15px;
@@ -79,14 +95,14 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
             border: none;
             background-color: transparent;
             font-size: 15px;
-            color: black
+            color: black;
           }
-          .delete-btn-content {
+          .delete-btn-comment {
             position: absolute;
-            right: 0;
-            
-            color: black
-            font-size: 15px;
+            right: 25px;
+            color: black;
+            border: none;
+            font-size: 12px;
           }
         `}
       </style>

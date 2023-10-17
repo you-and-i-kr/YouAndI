@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AlbumComment, { Comment } from './comment'
 
 interface AlbumPopupProps {
@@ -22,6 +22,22 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
   const deleteHandler = () => {
     setDeleteContent(!deleteContent)
   }
+
+  useEffect(() => {
+    const handleContentDelete = (e: MouseEvent) => {
+      if (
+        deleteContent &&
+        e.target instanceof Element &&
+        !e.target.classList.contains('content-delete-box')
+      ) {
+        setDeleteContent(false)
+      }
+    }
+    document.addEventListener('click', handleContentDelete)
+    return () => {
+      document.removeEventListener('click', handleContentDelete)
+    }
+  }, [deleteContent])
   return (
     <div className="AlbumPopup">
       <div className="popup-content">
@@ -62,7 +78,7 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
       <style jsx>
         {`
           .AlbumPopup {
-            position: relative;
+            
             display: flex;
             align-items: center;
             justify-content: center;
@@ -72,6 +88,7 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
 
           .popup-content {
             display: flex;
+            position: relative;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -89,9 +106,8 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
             color: white;
           }
           .content-img {
-            max-height: 500px;
-            max-width: 500px;
-            overflow: hidden;
+            height: 500px;
+            width: 500px;
           }
 
           .content-img img {
@@ -100,6 +116,7 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           }
 
           .popup-comment {
+            display: flex;
             width: 30%;
             height: 100%;
             display: flex;
@@ -108,7 +125,7 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           }
           .content-delete-con {
             position: absolute;
-            top: 120px;
+            top: 81px;
             right: 300px;
           }
           .content-delete-box {

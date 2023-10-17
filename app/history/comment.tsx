@@ -25,7 +25,6 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
   }) => {
     setComment(e.target.value)
   }
-  console.log(comments)
 
   const handleSubmit = () => {
     const newComment: Comment = {
@@ -92,7 +91,7 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
           background-color: white;
           display: flex;
           flex-direction: column;
-          justify-content: flex-start;
+          justify-content: center;
           align-items: center;
         }
 

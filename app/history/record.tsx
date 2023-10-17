@@ -31,6 +31,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
       {comments.map((comment, index) => (
         <div className="comment-records" key={index}>
           <div className="comment-record-con">
+            {/* 나중에 여기다가 유저 닉네임이나 사진 첨부 */}
             <div className="comment-record-text">{comment.text}</div>
             <div className="comment-record-timestamp">{comment.timestamp}</div>
           </div>
@@ -60,7 +61,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
             width: 100%;
             display: flex;
             justify-content: space-between;
-            margin: 10px 0 10px 0;
+            margin: 20px 0 20px 0;
           }
           .comment-record-con {            
             display: flex;

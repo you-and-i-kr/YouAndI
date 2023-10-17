@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import AlbumComment from './comment'
+import AlbumComment, { Comment } from './comment'
 
 interface AlbumPopupProps {
   contents: File

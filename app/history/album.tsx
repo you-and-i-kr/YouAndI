@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import AlbumPopup from './popup'
+import { Comment } from './comment'
 
 export interface AlbumProps {
   contents: File[]

@@ -4,13 +4,16 @@ import AlbumComment from './comment'
 interface AlbumPopupProps {
   contents: File
   setContentClicked: (value: boolean) => void
+  comments: Comment[]
+  setComments: (comments: Comment[]) => void
 }
 
 const AlbumPopup: React.FC<AlbumPopupProps> = ({
   contents,
   setContentClicked,
+  comments,
+  setComments,
 }) => {
-  console.log(contents)
   return (
     <div className="AlbumPopup">
       <div className="popup-content">
@@ -25,7 +28,11 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
         </div>
       </div>
       <div className="popup-comment">
-        <AlbumComment setContentClicked={setContentClicked} />
+        <AlbumComment
+          setContentClicked={setContentClicked}
+          comments={comments}
+          setComments={setComments}
+        />
       </div>
       <style jsx>
         {`

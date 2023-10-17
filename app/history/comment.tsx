@@ -3,6 +3,8 @@ import CommentRecord from './record'
 
 interface AlbumCommentProps {
   setContentClicked: (value: boolean) => void
+  comments: Comment[]
+  setComments: (comments: Comment[]) => void
 }
 
 export interface Comment {
@@ -11,16 +13,19 @@ export interface Comment {
   timestamp: string
 }
 
-const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
+const AlbumComment: React.FC<AlbumCommentProps> = ({
+  setContentClicked,
+  comments,
+  setComments,
+}) => {
   const [comment, setComment] = useState('')
   const [record, setRecord] = useState<Comment[]>([])
-  // console.log('주는쪽', record)
-
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
   }) => {
     setComment(e.target.value)
   }
+  console.log(comments)
 
   const handleSubmit = () => {
     const newComment: Comment = {
@@ -29,7 +34,8 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
       timestamp: new Date().toLocaleString(),
     }
 
-    setRecord([...record, newComment])
+    // setRecord([...record, newComment])
+    setComments([...comments, newComment])
 
     setComment('')
   }
@@ -47,7 +53,7 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
           onChange={handleCommentChange}
         />
         <div className="comment-record-component">
-          <CommentRecord record={record} setRecord={setRecord} />
+          <CommentRecord comments={comments} setComments={setComments} />
         </div>
         <div className="comment-btn">
           <button

@@ -2,30 +2,33 @@ import React, { useState } from 'react'
 import { Comment } from './comment'
 
 interface CommentRecordProps {
-  setRecord: (value: Comment[]) => void
-  record: Comment[]
+  comments: Comment[]
+  setComments: (comments: Comment[]) => void
 }
 
-const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
+const CommentRecord: React.FC<CommentRecordProps> = ({
+  comments,
+  setComments,
+}) => {
   const [commentoDelete, setCommentDelete] = useState<number | null>(null)
+
   const deleteHandler = (index: number) => {
     setCommentDelete(index)
   }
-  // console.log('받아온거', record)
 
   const deleteComment = () => {
     if (commentoDelete !== null) {
-      const updatedComments = record.filter(
+      const updatedComments = comments.filter(
         (_, index) => index !== commentoDelete,
       )
-      setRecord(updatedComments)
+      setComments(updatedComments)
       setCommentDelete(null)
     }
   }
 
   return (
     <div className="records">
-      {record.map((comment, index) => (
+      {comments.map((comment, index) => (
         <div className="comment-records" key={index}>
           <div className="comment-record-con">
             <div className="comment-record-text">{comment.text}</div>

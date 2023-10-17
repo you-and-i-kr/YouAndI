@@ -8,6 +8,8 @@ export interface AlbumProps {
 const Album: React.FC<AlbumProps> = ({ contents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
+  //각 콘텐츠 별 댓글 저장
+  const [comments, setComments] = useState<{ [index: number]: Comment[] }>({})
 
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
@@ -44,6 +46,13 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
           <AlbumPopup
             setContentClicked={setContentClicked}
             contents={contents[clickedContentIndex]}
+            comments={comments[clickedContentIndex] || []} //
+            setComments={(newComments) =>
+              setComments({
+                ...comments,
+                [clickedContentIndex]: newComments,
+              })
+            }
           />
         </div>
       )}

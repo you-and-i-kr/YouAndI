@@ -3,6 +3,8 @@ import CommentRecord from './record'
 
 interface AlbumCommentProps {
   setContentClicked: (value: boolean) => void
+  comments: Comment[]
+  setComments: (comments: Comment[]) => void
 }
 
 export interface Comment {
@@ -11,11 +13,12 @@ export interface Comment {
   timestamp: string
 }
 
-const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
+const AlbumComment: React.FC<AlbumCommentProps> = ({
+  setContentClicked,
+  comments,
+  setComments,
+}) => {
   const [comment, setComment] = useState('')
-  const [record, setRecord] = useState<Comment[]>([])
-  // console.log('주는쪽', record)
-
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
   }) => {
@@ -29,7 +32,8 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
       timestamp: new Date().toLocaleString(),
     }
 
-    setRecord([...record, newComment])
+    // setRecord([...record, newComment])
+    setComments([...comments, newComment])
 
     setComment('')
   }
@@ -40,26 +44,39 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
 
   return (
     <div className="AlbumComment">
+      <div className="delete-btn-box">
+        <button
+          className="delete-btn"
+          onClick={() => {
+            closeBtnHandler()
+          }}
+        >
+          𝖷
+        </button>
+      </div>
       <div className="comment-container">
-        <textarea
-          placeholder="댓글을 작성해주세요"
-          value={comment}
-          onChange={handleCommentChange}
-        />
-        <CommentRecord record={record} setRecord={setRecord} />
-        <div className="comment-btn">
+        <div className="comment-record-component">
+          <CommentRecord comments={comments} setComments={setComments} />
+        </div>
+        <div className="record-writing-box">
+          <textarea
+            className="comment-record-textarea"
+            placeholder="댓글 달기"
+            value={comment}
+            onChange={handleCommentChange}
+          />
           <button
-            onClick={() => {
-              closeBtnHandler()
-            }}
+            className="writing-box-btn
+          "
+            onClick={handleSubmit}
           >
-            Close
+            ⬆
           </button>
-          <button onClick={handleSubmit}>Submit</button>
         </div>
       </div>
       <style jsx>{`
         .AlbumComment {
+          position: relative;
           width: 100%;
           height: 100%;
           display: flex;
@@ -70,15 +87,56 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({ setContentClicked }) => {
         .comment-container {
           width: 100%;
           height: 70%;
+          background-color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: center;
+          align-items: center;
         }
 
-        .comment-btn {
-          width: 100%;
+        .comment-record-component {
+          width: 80%;
+          height: 80%;
+          overflow: scroll;
+        }
+        .record-writing-box {
+          display: flex;
+          width: 80%;
+          height: 8%;
+          align-items: center;
+          justify-content: center;
+          background-color: #ecedf1;
+          border-radius: 30px;
+        }
+        .writing-box-btn {
+          width: 30px;
+          height: 30px;
+          border-radius: 50px;
+          border: none;
+          color: white;
+          background-color: #de5a7b;
+        }
+        .comment-record-textarea {
+          border: none;
+          width: 85%;
+          height: 100%;
+          line-height: 30px;
+          height: 30px;
+          background-color: transparent;
+        }
+
+        .delete-btn-box {
+          position: absolute;
+          top: 80px;
+          right: 0;
           display: flex;
           justify-content: space-between;
+        }
+        .delete-btn {
+          font-size: 20px;
+          color: white;
+          border: none;
+          background-color: transparent;
         }
       `}</style>
     </div>

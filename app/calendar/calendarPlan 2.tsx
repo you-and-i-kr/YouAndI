@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 export interface CalendarProps {
-  setDayClicked: () => void
+  setDayClicked: (value: boolean) => void
   planDate: number
   month: number
   year: number
@@ -37,7 +37,7 @@ export const CalendarPlan: React.FC<CalendarProps> = ({
   const [passedDate, setPassedDate] = useState(
     new Date(calendarYear, month, planDate + 1).toISOString().substring(0, 10),
   )
-  const closeBtnHandler = () => {
+  const closeBtnHandler = (value: boolean) => {
     setDayClicked(false)
   }
 
@@ -97,7 +97,7 @@ export const CalendarPlan: React.FC<CalendarProps> = ({
           </button>
           <button
             onClick={() => {
-              closeBtnHandler()
+              closeBtnHandler
             }}
           >
             Close

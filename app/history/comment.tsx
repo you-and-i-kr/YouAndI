@@ -19,7 +19,6 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
   setComments,
 }) => {
   const [comment, setComment] = useState('')
-  const [record, setRecord] = useState<Comment[]>([])
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
   }) => {

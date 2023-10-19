@@ -14,7 +14,6 @@ export interface Comment {
 }
 
 const AlbumComment: React.FC<AlbumCommentProps> = ({
-  setContentClicked,
   comments,
   setComments,
 }) => {
@@ -36,10 +35,6 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
     setComments([...comments, newComment])
 
     setComment('')
-  }
-
-  const closeBtnHandler = () => {
-    setContentClicked(false)
   }
 
   return (

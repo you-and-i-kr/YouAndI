@@ -108,14 +108,14 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           .content-img {
             height: 500px;
             width: 500px;
-          }      
+          }
 
           .content-img img {
             height: 100%;
             width: 100%;     
-            object-fit: contain;     
+            object-fit: contain;
             }
-
+          
           .content-img video {
             height: 100%;
             width: 100%;     

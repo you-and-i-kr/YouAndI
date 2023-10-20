@@ -1,15 +1,22 @@
 'use client'
 
+import { useEffect } from 'react'
 import Wrapper from './components/Wrapper'
+
+import { useSession } from 'next-auth/react'
 
 //1. 홈화면
 export default function Home() {
+  const { data: session } = useSession()
+
   const alarms = [
     { content: '남자친구 님이 메모를 새로 작성했습니다.', isRead: false },
     { content: '남자친구님이 사진을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 사진에 댓글을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 일정을 등록하였습니다.', isRead: true },
   ]
+
+  console.log(session)
 
   return (
     <Wrapper>

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 
 //로그인 화면
 export default function SignIn() {
@@ -20,11 +21,18 @@ export default function SignIn() {
     [],
   )
 
-  const handleLogin = useCallback(() => {
-    setErrorMessage(
-      `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
-    )
-  }, [])
+  const handleLogin = useCallback(async () => {
+    // setErrorMessage(
+    //   `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
+    // )
+
+    const result = await signIn('credentials', {
+      username: email,
+      password: password,
+      redirect: true,
+      callbackUrl: '/',
+    })
+  }, [email, password])
 
   return (
     <>

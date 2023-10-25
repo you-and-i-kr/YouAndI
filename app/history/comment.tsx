@@ -14,7 +14,6 @@ export interface Comment {
 }
 
 const AlbumComment: React.FC<AlbumCommentProps> = ({
-  setContentClicked,
   comments,
   setComments,
 }) => {
@@ -38,22 +37,8 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
     setComment('')
   }
 
-  const closeBtnHandler = () => {
-    setContentClicked(false)
-  }
-
   return (
     <div className="AlbumComment">
-      <div className="delete-btn-box">
-        <button
-          className="delete-btn"
-          onClick={() => {
-            closeBtnHandler()
-          }}
-        >
-          𝖷
-        </button>
-      </div>
       <div className="comment-container">
         <div className="comment-record-component">
           <CommentRecord comments={comments} setComments={setComments} />
@@ -122,20 +107,6 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
           height: 100%;
           line-height: 30px;
           height: 30px;
-          background-color: transparent;
-        }
-
-        .delete-btn-box {
-          position: absolute;
-          top: 80px;
-          right: 0;
-          display: flex;
-          justify-content: space-between;
-        }
-        .delete-btn {
-          font-size: 20px;
-          color: white;
-          border: none;
           background-color: transparent;
         }
       `}</style>

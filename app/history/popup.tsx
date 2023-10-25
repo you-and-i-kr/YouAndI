@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import AlbumComment, { Comment } from './comment'
+import DeleteConfirmation from './deleteConfirmation'
 
 interface AlbumPopupProps {
   contents: File
@@ -19,8 +20,23 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
   setComments,
 }) => {
   const [deleteContent, setDeleteContent] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+
   const deleteHandler = () => {
     setDeleteContent(!deleteContent)
+  }
+
+  const closeWindowBtnHandler = () => {
+    setContentClicked(false)
+  }
+
+  const confirmDelete = () => {
+    onDelete()
+    setDeleteConfirmation(false)
+  }
+
+  const cancelDelete = () => {
+    setDeleteConfirmation(false)
   }
 
   useEffect(() => {
@@ -58,27 +74,51 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           setComments={setComments}
         />
       </div>
-      <div className="content-delete-con">
-        <button
-          className="content-delete-box"
-          onClick={() => {
-            deleteHandler()
-          }}
-        >
-          :
-        </button>
-        {deleteContent ? (
-          <button className="content-delete-btn" onClick={onDelete}>
-            삭제
+      <div className="content-btns-box">
+        <div className="content-delete-con">
+          <button
+            className="content-delete-box"
+            onClick={() => {
+              deleteHandler()
+            }}
+          >
+            :
           </button>
-        ) : (
-          ''
-        )}
+          {deleteContent ? (
+            <button
+              className="content-delete-btn"
+              onClick={() => setDeleteConfirmation(true)}
+            >
+              삭제
+            </button>
+          ) : (
+            ''
+          )}
+        </div>
+
+        <div className="content-close-box">
+          <button
+            className="close-box-btn"
+            onClick={() => {
+              closeWindowBtnHandler()
+            }}
+          >
+            𝖷
+          </button>
+        </div>
       </div>
+      {deleteConfirmation && (
+        <div className="deleteConfirmation-box">
+          <DeleteConfirmation
+            onCancel={cancelDelete}
+            onConfirm={confirmDelete}
+          />
+        </div>
+      )}
       <style jsx>
         {`
           .AlbumPopup {
-            
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,8 +151,15 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           }
 
           .content-img img {
-            width: 100%;
             height: 100%;
+            width: 100%;     
+            object-fit: contain;
+            }
+          
+          .content-img video {
+            height: 100%;
+            width: 100%;     
+            object-fit: contain;  
           }
 
           .popup-comment {
@@ -123,11 +170,13 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
             justify-content: flex-start;
             margin-left: 20px;
           }
-          .content-delete-con {
-            position: absolute;
-            top: 81px;
-            right: 300px;
-          }
+        .content-btns-box {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          top: 110px;
+          right: 260px;
+        }
           .content-delete-box {
             font-weight: 700;
             font-size: 20px;
@@ -138,12 +187,29 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           .content-delete-btn {
             position: absolute;
             top: 5px;
-            left: 30px;
+            left:20px;
             width: 50px;
             border: none;
             border-radius: 5px;
             color:black
             background-color: #ecedf1;
+          }
+
+          .content-close-box {
+          display: flex;
+          }
+          .close-box-btn {
+            font-size: 20px;
+            color: white;
+            border: none;
+            background-color: transparent;
+          }
+
+          .deleteConfirmation-box {
+            position: absolute;
+            top: 300px;
+            width: 20%;
+            z-index: 1000;
           }
         `}
       </style>

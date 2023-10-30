@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { PlanContent } from './myCalendar'
+import { database } from '../../firebase'
+import { ref, set, push } from 'firebase/database'
 
 interface PlanPopupProps {
   onClose: () => void
@@ -28,7 +30,22 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
 
   const handleSave = () => {
     onSave({ title, startDate, endDate, memo })
+    addEventToDatabase({ title, startDate, endDate, memo })
     onClose()
+  }
+
+  const addEventToDatabase = (newEvent: PlanContent) => {
+    const eventsRef = ref(database, 'events')
+    const newEventRef = push(eventsRef)
+    console.log('Data to be saved:', newEvent)
+
+    set(newEventRef, newEvent)
+      .then(() => {
+        console.log('Data saved successfully')
+      })
+      .catch((error) => {
+        console.error('Error saving data:', error)
+      })
   }
 
   return (

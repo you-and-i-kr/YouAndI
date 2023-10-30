@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PlanPopup from './planPopup'
 import SetPopup from './setPopup'
+import { ref, onValue } from 'firebase/database'
+import { database } from '@/firebase'
 
 interface CalendarProps {
   initialYear: number
@@ -25,6 +27,17 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
   const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
+
+  useEffect(() => {
+    const eventsRef = ref(database, 'events')
+    onValue(eventsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val()
+        const plansArray = Object.values(data)
+        setPlans(plansArray)
+      }
+    })
+  }, [])
 
   const generateCalendar = (year: number, month: number) => {
     const lastDay = new Date(year, month + 1, 0)

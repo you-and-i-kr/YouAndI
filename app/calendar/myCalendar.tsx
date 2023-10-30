@@ -21,7 +21,6 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
 
   const [selectedDay, setSelectedDay] = useState('')
   const [plans, setPlans] = useState<PlanContent[]>([])
-  console.log(plans)
   const [isPopupOpen, setPopupOpen] = useState(false)
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)

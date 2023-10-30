@@ -12,6 +12,7 @@ interface CalendarProps {
 }
 
 export interface PlanContent {
+  id: string
   title: string
   startDate: string
   endDate: string
@@ -131,10 +132,12 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
             2,
             '0',
           )}-${String(day).padStart(2, '0')}`
-          const planForDay = plans.filter(
-            (plan: PlanContent) =>
-              plan.startDate <= currentDay && plan.endDate >= currentDay,
-          )
+          const planForDay =
+            plans &&
+            plans.filter(
+              (plan: PlanContent) =>
+                plan.startDate <= currentDay && plan.endDate >= currentDay,
+            )
 
           return (
             <div key={index} className="calendar-cells">

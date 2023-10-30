@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { PlanContent } from './myCalendar'
 import { database } from '../../firebase'
 import { ref, set, push } from 'firebase/database'
+import { v4 as uuidv4 } from 'uuid'
 
 interface PlanPopupProps {
   onClose: () => void
@@ -28,9 +29,13 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
   const day = String(minDate.getDate()).padStart(2, '0')
   const minDateString = `${year}-${month}-${day}`
 
+  const generateUniqueId = () => {
+    return uuidv4()
+  }
   const handleSave = () => {
-    onSave({ title, startDate, endDate, memo })
-    addEventToDatabase({ title, startDate, endDate, memo })
+    const id = generateUniqueId()
+    onSave({ id, title, startDate, endDate, memo })
+    addEventToDatabase({ id, title, startDate, endDate, memo })
     onClose()
   }
 

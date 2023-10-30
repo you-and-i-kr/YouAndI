@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { PlanContent } from './myCalendar'
+import { database } from '../../firebase'
+import { ref, set, remove } from 'firebase/database'
 
 interface SetPopupProps {
   onClose: () => void
@@ -22,9 +24,20 @@ const SetPopup: React.FC<SetPopupProps> = ({
   }
 
   const handleSave = () => {
-    onClose()
-    onSave(editedPlan)
-    setEditMode(false)
+    if (editMode) {
+      const eventsRef = ref(database, `events/${plan.id}`)
+      set(eventsRef, editedPlan)
+        .then(() => {
+          onSave(editedPlan)
+          onClose()
+        })
+        .catch((error) => {
+          console.error('Error saving edited data:', error)
+        })
+    } else {
+      onSave(editedPlan)
+      onClose()
+    }
   }
 
   return (

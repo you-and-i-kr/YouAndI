@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import PlanPopup from './planPopup'
 import SetPopup from './setPopup'
-import { ref, onValue } from 'firebase/database'
-import { database } from '@/firebase'
+import { ref, onValue, remove, getDatabase } from 'firebase/database'
+import app from '@/firebase'
 
 interface CalendarProps {
   initialYear: number
@@ -28,8 +28,10 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
   const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
+  console.log(plans)
 
   useEffect(() => {
+    const database = getDatabase(app)
     const eventsRef = ref(database, 'events')
     onValue(eventsRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -38,7 +40,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
         setPlans(plansArray)
       }
     })
-  }, [])
+  }, [plans])
 
   const generateCalendar = (year: number, month: number) => {
     const lastDay = new Date(year, month + 1, 0)
@@ -71,16 +73,21 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
 
   const onDelete = () => {
     if (setPopupPlan) {
-      const updatedPlans = plans.filter((plan) => {
-        return (
-          plan.title !== setPopupPlan.title ||
-          plan.startDate !== setPopupPlan.startDate ||
-          plan.endDate !== setPopupPlan.endDate ||
-          plan.memo !== setPopupPlan.memo
-        )
-      })
+      const planId = setPopupPlan.id
+      const database = getDatabase(app)
+      const databaseRef = ref(database, 'events/' + planId)
 
-      setPlans(updatedPlans)
+      remove(databaseRef)
+        .then(() => {
+          console.log('Plan deleted from Firebase Realtime Database')
+        })
+        .catch((error) => {
+          console.error(
+            'Error deleting plan from Firebase Realtime Database:',
+            error,
+          )
+        })
+
       closePopup()
     }
   }

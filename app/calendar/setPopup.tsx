@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { PlanContent } from './myCalendar'
-import { database } from '../../firebase'
-import { ref, set, remove } from 'firebase/database'
+import { ref, set, remove, getDatabase } from 'firebase/database'
+import app from '@/firebase'
 
 interface SetPopupProps {
   onClose: () => void
@@ -22,6 +22,7 @@ const SetPopup: React.FC<SetPopupProps> = ({
   const handleEdit = () => {
     setEditMode(!editMode)
   }
+  const database = getDatabase(app)
 
   const handleSave = () => {
     if (editMode) {

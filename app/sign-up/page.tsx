@@ -111,7 +111,7 @@ export default function SignUp() {
   const handleSubmit = useCallback(async () => {
     try {
       const signUp = await axios.post(
-        'http://13.125.249.67:8080/v2/api/members/create',
+        process.env.NEXT_PUBLIC_API_BASE_URL + '/v2/api/members/create',
         {
           email,
           note_name: diaryNm,
@@ -131,7 +131,7 @@ export default function SignUp() {
   }, [router, email, diaryNm, password, phoneNumber1, phoneNumber2])
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (session?.user) {
       router.replace('/')
     }
   }, [session, router])

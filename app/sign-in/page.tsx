@@ -41,7 +41,7 @@ export default function SignIn() {
   }, [email, password, router])
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (session?.user) {
       router.replace('/')
     } else {
     }

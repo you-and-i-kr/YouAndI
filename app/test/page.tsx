@@ -1,10 +1,7 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
+// import { getServerSession } from 'next-auth'
+// import { authOptions } from '@/pages/api/auth/[...nextauth]'
 async function Test() {
-  const data = await getServerSession(authOptions)
-
-  console.log(authOptions)
-  console.log(data, 'ss')
+  // const data = await getServerSession(authOptions)
 
   return <></>
 }

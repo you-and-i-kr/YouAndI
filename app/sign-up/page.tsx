@@ -1,14 +1,22 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import axios from 'axios'
 
 // import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import moment from 'moment'
 
 //회원가입 화면
 export default function SignUp() {
-  const [step, setStep] = useState(3)
+  const router = useRouter()
+
+  const { data: session } = useSession()
+
+  const [step, setStep] = useState(1)
 
   //이메일, 비밀번호, 전화번호, 시작일, 다이어리 이름
   const [email, setEmail] = useState('')
@@ -100,7 +108,33 @@ export default function SignUp() {
     [],
   )
 
-  const handleSubmit = useCallback(() => {}, [])
+  const handleSubmit = useCallback(async () => {
+    try {
+      const signUp = await axios.post(
+        'http://13.125.249.67:8080/v2/api/members/create',
+        {
+          email,
+          note_name: diaryNm,
+          password,
+          start_date: moment().format('YYYYMMDD'),
+          my_phone_number: phoneNumber1,
+          your_phone_number: phoneNumber2,
+        },
+      )
+      if (signUp.status === 200) {
+        alert('회원가입이 완료되었습니다.')
+        router.replace('/sign-in')
+      }
+    } catch (err) {
+      alert('이미 존재하는 회원입니다.')
+    }
+  }, [router, email, diaryNm, password, phoneNumber1, phoneNumber2])
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      router.replace('/')
+    }
+  }, [session, router])
 
   return (
     <>

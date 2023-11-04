@@ -1,11 +1,15 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 //로그인 화면
 export default function SignIn() {
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const router = useRouter()
+
+  const { data: session } = useSession()
 
   const [email, setEmail] = useState('')
 
@@ -13,30 +17,47 @@ export default function SignIn() {
 
   const [errorMessage, setErrorMessage] = useState('')
 
-  const handleInputForOnlyNumber = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.target.value = e.target.value.replace(/[^0-9]/g, '')
-    },
-    [],
-  )
+  // const handleInputForOnlyNumber = useCallback(
+  //   (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     e.target.value = e.target.value.replace(/[^0-9]/g, '')
+  //   },
+  //   [],
+  // )
 
-  const handleLogin = useCallback(() => {
-    setErrorMessage(
-      `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
-    )
-  }, [])
+  const handleLogin = useCallback(async () => {
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (result?.status === 200) {
+      router.replace('/')
+    } else {
+      setErrorMessage(
+        `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
+      )
+    }
+  }, [email, password, router])
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      router.replace('/')
+    } else {
+    }
+  }, [session, router])
 
   return (
     <>
       <div className="sign-in">
         <div className="inputs">
-          <input
+          {/* <input
             type="tel"
             placeholder="휴대폰 번호 (11자리 '-' 없이 입력)"
             maxLength={11}
             onChange={(e) => setPhoneNumber(e.target.value)}
             onInput={handleInputForOnlyNumber}
-          />
+          /> */}
           <input
             type="email"
             placeholder="이메일"
@@ -53,7 +74,7 @@ export default function SignIn() {
 
         <button
           className="sign-in-btn"
-          disabled={!phoneNumber || !email || !password}
+          disabled={!email || !password}
           onClick={handleLogin}
         >
           로그인

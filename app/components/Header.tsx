@@ -1,8 +1,20 @@
 'use client'
 
 import Link from 'next/link'
+import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
+  const router = useRouter()
+
+  const { data: session } = useSession()
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false })
+
+    router.replace('/sign-in')
+  }
+
   return (
     <>
       <header>
@@ -11,7 +23,11 @@ export default function Header() {
             <img className="logo-img" src="/images/logo.png"></img>
           </div>
         </Link>
-        <button className="logout">로그아웃</button>
+        {session?.user && (
+          <button className="logout" onClick={handleLogout}>
+            로그아웃
+          </button>
+        )}
       </header>
 
       <style jsx>{`

@@ -1,16 +1,51 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+
 import Wrapper from './components/Wrapper'
+import axios from 'axios'
 
 //1. 홈화면
 export default function Home() {
+  const router = useRouter()
+
   const alarms = [
     { content: '남자친구 님이 메모를 새로 작성했습니다.', isRead: false },
     { content: '남자친구님이 사진을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 사진에 댓글을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 일정을 등록하였습니다.', isRead: true },
   ]
+
+  /**
+   * 예시 fetch 입니다
+   */
+  const { data: session } = useSession()
+
+  const [phontos, setPhotos] = useState()
+
+  useEffect(() => {
+    if (!session?.accessToken) {
+      return router.replace('/sign-in')
+    }
+    async function getPhotos() {
+      const result = await axios.get(`http://13.125.249.67:8080/api/photos`, {
+        headers: {
+          ACCESS_TOKEN: session?.accessToken,
+        },
+      })
+
+      setPhotos(result.data)
+    }
+    getPhotos()
+  }, [session, router])
+
+  console.log(phontos)
+  /**
+   * 예시 fetch 입니다
+   */
 
   return (
     <Wrapper>

@@ -1,17 +1,34 @@
 import React, { useState } from 'react'
 import AlbumPopup from './popup'
+import { Comment } from './comment'
 
 export interface AlbumProps {
   contents: File[]
+  setContents: (contents: File[]) => void
 }
 
-const Album: React.FC<AlbumProps> = ({ contents }) => {
+const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
+  //각 콘텐츠 별 댓글 저장
+  const [comments, setComments] = useState<{ [index: number]: Comment[] }>({})
 
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
     setClickedContentIndex(index)
+  }
+
+  const handleDelete = () => {
+    const updatedContents = contents.filter(
+      (_, index) => index !== clickedContentIndex,
+    )
+
+    const updatedComments = { ...comments }
+    delete updatedComments[clickedContentIndex]
+
+    setContents(updatedContents)
+    setComments(updatedComments)
+    setContentClicked(false)
   }
 
   return (
@@ -43,7 +60,15 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
         <div className="content-popup">
           <AlbumPopup
             setContentClicked={setContentClicked}
-            images={contents[clickedContentIndex]}
+            contents={contents[clickedContentIndex]}
+            comments={comments[clickedContentIndex] || []} //
+            setComments={(newComments) =>
+              setComments({
+                ...comments,
+                [clickedContentIndex]: newComments,
+              })
+            }
+            onDelete={handleDelete}
           />
         </div>
       )}

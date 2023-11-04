@@ -131,7 +131,7 @@ export default function SignUp() {
   }, [router, email, diaryNm, password, phoneNumber1, phoneNumber2])
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (session?.user) {
       router.replace('/')
     }
   }, [session, router])

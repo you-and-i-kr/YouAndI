@@ -47,6 +47,8 @@ export default function Home() {
    * 예시 fetch 입니다
    */
 
+  if (!session) return <></>
+
   return (
     <Wrapper>
       <div className="direction-changer">

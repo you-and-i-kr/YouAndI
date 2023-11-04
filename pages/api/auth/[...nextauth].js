@@ -13,7 +13,7 @@ export const authOptions = {
 
       async authorize(credentials) {
         const signIn = await axios.post(
-          'http://13.125.249.67:8080/v2/api/members/login',
+          process.env.NEXT_PUBLIC_API_BASE_URL + '/v2/api/members/login',
           {
             email: credentials.email,
             password: credentials.password,

@@ -31,11 +31,14 @@ export default function Home() {
       return router.replace('/sign-in')
     }
     async function getPhotos() {
-      const result = await axios.get(`http://13.125.249.67:8080/api/photos`, {
-        headers: {
-          ACCESS_TOKEN: session?.accessToken,
+      const result = await axios.get(
+        process.env.NEXT_PUBLIC_API_BASE_URL + `/api/photos`,
+        {
+          headers: {
+            ACCESS_TOKEN: session?.accessToken,
+          },
         },
-      })
+      )
 
       setPhotos(result.data)
     }

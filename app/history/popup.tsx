@@ -174,8 +174,8 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           display: flex;
           align-items: center;
           position: absolute;
-          top: 110px;
-          right: 260px;
+          top: 70px;
+          right: 170px;
         }
           .content-delete-box {
             font-weight: 700;

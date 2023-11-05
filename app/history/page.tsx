@@ -4,6 +4,8 @@ import React, { useCallback, useRef, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import Album from './album'
 
+import Axios from 'axios'
+
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
   const [contents, setContents] = useState<File[]>([])
@@ -24,7 +26,7 @@ const History = () => {
         return
       }
       const files = Array.from(e.target.files)
-      setContents((prevConents) => [...prevConents, ...files])
+      setContents((prevContents) => [...prevContents, ...files])
     },
     [],
   )

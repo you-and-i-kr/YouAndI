@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import PlanPopup from './planPopup'
 import SetPopup from './setPopup'
-import { ref, onValue, remove, getDatabase } from 'firebase/database'
+import { ref, onValue, remove, getDatabase, off, set } from 'firebase/database'
 import app from '@/firebase'
 
 interface CalendarProps {
@@ -28,19 +28,45 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [isSetPopupOpen, setSetPopupOpen] = useState(false)
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
   const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
-  console.log(plans)
 
   useEffect(() => {
     const database = getDatabase(app)
     const eventsRef = ref(database, 'events')
-    onValue(eventsRef, (snapshot) => {
+
+    const handleDataChange = (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val()
         const plansArray = Object.values(data)
         setPlans(plansArray)
+      } else {
+        setPlans([])
       }
-    })
-  }, [plans])
+    }
+    onValue(eventsRef, handleDataChange)
+
+    const handleChildRemoved = (childSnapshot) => {
+      setPlans((prevPlans) =>
+        prevPlans.filter((plan) => plan.id !== childSnapshot.key),
+      )
+    }
+    const handleChildChanged = (childSnapshot) => {
+      setPlans((prevPlans) =>
+        prevPlans.map((plan) =>
+          plan.id === childSnapshot.key
+            ? { ...plan, ...childSnapshot.val() }
+            : plan,
+        ),
+      )
+    }
+    onValue(eventsRef, handleChildRemoved, { onlyOnce: false })
+    onValue(eventsRef, handleChildChanged, { onlyOnce: false })
+
+    return () => {
+      off(eventsRef, handleDataChange)
+      off(eventsRef, handleChildRemoved)
+      off(eventsRef, handleChildChanged)
+    }
+  }, [])
 
   const generateCalendar = (year: number, month: number) => {
     const lastDay = new Date(year, month + 1, 0)
@@ -109,16 +135,23 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setSetPopupOpen(false)
   }
   const handleEditSavePlan = (newPlan: PlanContent) => {
-    const updatedPlans = plans.filter((plan: PlanContent) => {
-      return (
-        plan.title !== setPopupPlan?.title ||
-        plan.startDate !== setPopupPlan?.startDate ||
-        plan.endDate !== setPopupPlan?.endDate ||
-        plan.memo !== setPopupPlan?.memo
-      )
-    })
-    updatedPlans.push(newPlan)
-    setPlans(updatedPlans)
+    const database = getDatabase(app)
+    const databaseRef = ref(database, 'events/' + setPopupPlan?.id)
+
+    set(databaseRef, newPlan)
+      .then(() => {
+        console.log('Plan edited and saved in Firebase Realtime Database')
+      })
+      .catch((error) => {
+        console.error(
+          'Error editing and saving plan in Firebase Realtime Database:',
+          error,
+        )
+      })
+    setPlans((prevPlans) =>
+      prevPlans.map((plan) => (plan.id === setPopupPlan?.id ? newPlan : plan)),
+    )
+    closePopup()
   }
 
   return (

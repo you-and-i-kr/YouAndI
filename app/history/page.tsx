@@ -23,23 +23,21 @@ import app from '../../firebase'
 
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
-  const [contents, setContents] = useState<File[]>([])
+  // const [contents, setContents] = useState<File[]>([])
   const [imagesData, setImagesData] = useState<any[]>([])
-  console.log(imagesData)
-
   const inputRef = useRef<HTMLInputElement | null>(null)
-
+  console.log(imagesData)
   const storage = getStorage(app)
   const database = getDatabase(app)
 
   const handleFilterChange = (type: string) => {
     setFilter(type)
   }
-  const contentNumber = contents && contents.length
+  const contentNumber = imagesData && imagesData.length
 
-  const images = contents.filter((file) => file.type.startsWith('image/'))
+  const images = imagesData.filter((file) => file.type.startsWith('image/'))
   const imagesNumber = images && images.length
-  const videos = contents.filter((file) => file.type.startsWith('video/'))
+  const videos = imagesData.filter((file) => file.type.startsWith('video/'))
   const videosNumber = videos.length
 
   useEffect(() => {
@@ -66,36 +64,44 @@ const History = () => {
 
       for (const file of files) {
         const storageRefInstance = storageRef(storage, `uploads/${file.name}`)
-        await uploadBytes(storageRefInstance, file)
 
-        const downloadURL = await getDownloadURL(storageRefInstance)
+        try {
+          // 파베 스토리지에 데이터 넣기
+          await uploadBytes(storageRefInstance, file)
 
-        const contentsRef = databaseRef(database, 'contents')
+          const downloadURL = await getDownloadURL(storageRefInstance)
 
-        const newContentRef = push(contentsRef)
-        const contentId = newContentRef.key
+          // 리얼타임 데이터베이스에 넣기
+          const contentsRef = databaseRef(database, 'contents')
+          const newContentRef = push(contentsRef)
 
-        const contentData = {
-          contentId,
-          type: file.type,
-          downloadURL,
+          const contentId = newContentRef.key
+
+          const contentData = {
+            contentId,
+            name: file.name,
+            type: file.type,
+            downloadURL,
+          }
+
+          // 리얼타임 데이터베이스에 넣기
+          await set(newContentRef, contentData)
+
+          console.log('Data added to the Realtime Database:', contentData)
+        } catch (error) {
+          console.error('Error during file upload:', error)
         }
-
-        set(contentsRef, contentData)
       }
-
-      setContents((prevContents) => [...prevContents, ...files])
     },
     [storage, database],
   )
-
   const handleUploadButtonClick = useCallback(() => {
     if (inputRef.current) {
       inputRef.current.click()
     }
   }, [])
 
-  const filteredImages = contents.filter((file) => {
+  const filteredImages = imagesData.filter((file) => {
     if (filter === 'all') {
       return true
     } else if (filter === 'photos') {
@@ -137,7 +143,7 @@ const History = () => {
             className="imageInput"
           />
           <label htmlFor="imageInput">
-            <Album contents={filteredImages} setContents={setContents} />
+            <Album contents={filteredImages} />
           </label>
         </div>
         <style jsx>{`

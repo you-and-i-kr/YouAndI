@@ -2,12 +2,18 @@ import React, { useState } from 'react'
 import AlbumPopup from './popup'
 import { Comment } from './comment'
 
+import { getDatabase, ref as databaseRef, remove } from 'firebase/database'
+
 export interface AlbumProps {
-  contents: File[]
-  setContents: (contents: File[]) => void
+  contents: {
+    contentId: string
+    type: string
+    name: string
+    downloadURL: string
+  }[]
 }
 
-const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
+const Album: React.FC<AlbumProps> = ({ contents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
   //각 콘텐츠 별 댓글 저장
@@ -19,14 +25,19 @@ const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
   }
 
   const handleDelete = () => {
-    const updatedContents = contents.filter(
-      (_, index) => index !== clickedContentIndex,
+    const selectedContent = contents[clickedContentIndex]
+
+    const database = getDatabase()
+    const contentsRef = databaseRef(
+      database,
+      `contents/${selectedContent.contentId}`,
     )
+
+    remove(contentsRef)
 
     const updatedComments = { ...comments }
     delete updatedComments[clickedContentIndex]
 
-    setContents(updatedContents)
     setComments(updatedComments)
     setContentClicked(false)
   }

@@ -5,7 +5,12 @@ import AlbumComment, { Comment } from './comment'
 import DeleteConfirmation from './deleteConfirmation'
 
 interface AlbumPopupProps {
-  contents: File
+  contents: {
+    contentId: string
+    type: string
+    name: string
+    downloadURL: string
+  }
   setContentClicked: (value: boolean) => void
   comments: Comment[]
   setComments: (comments: Comment[]) => void
@@ -21,6 +26,8 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
 }) => {
   const [deleteContent, setDeleteContent] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+
+  console.log(contents)
 
   const deleteHandler = () => {
     setDeleteContent(!deleteContent)
@@ -60,9 +67,9 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
         <div className="content-con">
           <div className="content-img">
             {contents.type.startsWith('image/') ? (
-              <img src={URL.createObjectURL(contents)} alt={contents.name} />
+              <img src={contents.downloadURL} alt={contents.name} />
             ) : contents.type.startsWith('video/') ? (
-              <video controls src={URL.createObjectURL(contents)} />
+              <video controls src={contents.downloadURL} />
             ) : null}
           </div>
         </div>

@@ -44,10 +44,7 @@ const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
                   onClick={() => contentClickHandler(index)}
                 >
                   {content.type.startsWith('image/') ? (
-                    <img
-                      src={URL.createObjectURL(content)}
-                      alt={`Image ${index}`}
-                    />
+                    <img src={content.downloadURL} alt={`Image ${index}`} />
                   ) : content.type.startsWith('video/') ? (
                     <video controls src={URL.createObjectURL(content)} />
                   ) : null}

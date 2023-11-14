@@ -1,13 +1,37 @@
 //2. 일기장 및 앨범 화면
 'use client'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import Album from './album'
+
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
+
+import {
+  getDatabase,
+  ref as databaseRef,
+  push,
+  set,
+  onValue,
+} from 'firebase/database'
+
+import app from '../../firebase'
 
 const History = () => {
   const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
   const [contents, setContents] = useState<File[]>([])
+  const [imagesData, setImagesData] = useState<any[]>([])
+  console.log(imagesData)
+
   const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const storage = getStorage(app)
+  const database = getDatabase(app)
+
   const handleFilterChange = (type: string) => {
     setFilter(type)
   }
@@ -18,15 +42,51 @@ const History = () => {
   const videos = contents.filter((file) => file.type.startsWith('video/'))
   const videosNumber = videos.length
 
+  useEffect(() => {
+    const contentsRef = databaseRef(database, 'contents')
+    const unsubscribe = onValue(contentsRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        const imagesArray = Object.values(data)
+        setImagesData(imagesArray)
+        console.log(images)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [database])
+
   const handleImageUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) {
         return
       }
+
       const files = Array.from(e.target.files)
-      setContents((prevConents) => [...prevConents, ...files])
+
+      for (const file of files) {
+        const storageRefInstance = storageRef(storage, `uploads/${file.name}`)
+        await uploadBytes(storageRefInstance, file)
+
+        const downloadURL = await getDownloadURL(storageRefInstance)
+
+        const contentsRef = databaseRef(database, 'contents')
+
+        const newContentRef = push(contentsRef)
+        const contentId = newContentRef.key
+
+        const contentData = {
+          contentId,
+          type: file.type,
+          downloadURL,
+        }
+
+        set(contentsRef, contentData)
+      }
+
+      setContents((prevContents) => [...prevContents, ...files])
     },
-    [],
+    [storage, database],
   )
 
   const handleUploadButtonClick = useCallback(() => {

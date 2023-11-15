@@ -26,7 +26,6 @@ const History = () => {
   // const [contents, setContents] = useState<File[]>([])
   const [imagesData, setImagesData] = useState<any[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null)
-  console.log(imagesData)
   const storage = getStorage(app)
   const database = getDatabase(app)
 
@@ -105,9 +104,9 @@ const History = () => {
     if (filter === 'all') {
       return true
     } else if (filter === 'photos') {
-      return file instanceof File && file.type.startsWith('image/')
+      return file.type && file.type.startsWith('image/')
     } else if (filter === 'videos') {
-      return file instanceof File && file.type.startsWith('video/')
+      return file.type && file.type.startsWith('video/')
     }
     return false
   })

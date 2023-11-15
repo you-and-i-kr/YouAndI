@@ -1,8 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AlbumPopup from './popup'
 import { Comment } from './comment'
 
-import { getDatabase, ref as databaseRef, remove } from 'firebase/database'
+import {
+  getDatabase,
+  ref as databaseRef,
+  remove,
+  onValue,
+} from 'firebase/database'
 
 export interface AlbumProps {
   contents: {
@@ -19,27 +24,39 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
   //각 콘텐츠 별 댓글 저장
   const [comments, setComments] = useState<{ [index: number]: Comment[] }>({})
 
+  const database = getDatabase()
+
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
     setClickedContentIndex(index)
   }
 
-  const handleDelete = () => {
-    const selectedContent = contents[clickedContentIndex]
+  const handleDelete = async () => {
+    try {
+      const selectedContent = contents[clickedContentIndex]
+      const database = getDatabase()
 
-    const database = getDatabase()
-    const contentsRef = databaseRef(
-      database,
-      `contents/${selectedContent.contentId}`,
-    )
+      //해당 콘텐츠의 댓글도 함께 삭제
+      const commentsRef = databaseRef(
+        database,
+        `comments/${clickedContentIndex}/${selectedContent.contentId}`,
+      )
+      await remove(commentsRef)
 
-    remove(contentsRef)
+      const contentsRef = databaseRef(
+        database,
+        `contents/${selectedContent.contentId}`,
+      )
+      await remove(contentsRef)
 
-    const updatedComments = { ...comments }
-    delete updatedComments[clickedContentIndex]
+      const updatedComments = { ...comments }
+      delete updatedComments[clickedContentIndex]
+      setComments(updatedComments)
 
-    setComments(updatedComments)
-    setContentClicked(false)
+      setContentClicked(false)
+    } catch (error) {
+      console.error('Error deleting content and comments:', error)
+    }
   }
 
   return (
@@ -57,7 +74,7 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
                   {content.type.startsWith('image/') ? (
                     <img src={content.downloadURL} alt={`Image ${index}`} />
                   ) : content.type.startsWith('video/') ? (
-                    <video controls src={URL.createObjectURL(content)} />
+                    <video controls src={content.downloadURL} />
                   ) : null}
                 </div>
               ) : null}
@@ -68,8 +85,9 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
         <div className="content-popup">
           <AlbumPopup
             setContentClicked={setContentClicked}
+            clickedContentIndex={clickedContentIndex}
             contents={contents[clickedContentIndex]}
-            comments={comments[clickedContentIndex] || []} //
+            comments={comments[clickedContentIndex] || []}
             setComments={(newComments) =>
               setComments({
                 ...comments,

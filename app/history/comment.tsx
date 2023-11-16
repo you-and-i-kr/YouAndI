@@ -1,10 +1,20 @@
 import React, { useState } from 'react'
 import CommentRecord from './record'
 
+import app from '../../firebase'
+import { getDatabase, ref as databaseRef, push, set } from 'firebase/database'
+
 interface AlbumCommentProps {
-  setContentClicked: (value: boolean) => void
   comments: Comment[]
+  clickedContentIndex: number
+  onDelete: () => void
   setComments: (comments: Comment[]) => void
+  contents: {
+    contentId: string
+    type: string
+    name: string
+    downloadURL: string
+  }
 }
 
 export interface Comment {
@@ -16,12 +26,26 @@ export interface Comment {
 const AlbumComment: React.FC<AlbumCommentProps> = ({
   comments,
   setComments,
+  contents,
+  clickedContentIndex,
+  onDelete,
 }) => {
   const [comment, setComment] = useState('')
+  const database = getDatabase(app)
+
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
   }) => {
     setComment(e.target.value)
+  }
+
+  const addComment = (newComment: Comment) => {
+    const commentsRef = databaseRef(
+      database,
+      `comments/${clickedContentIndex}/${contents.contentId}`,
+    )
+    const newCommentRef = push(commentsRef)
+    set(newCommentRef, newComment)
   }
 
   const handleSubmit = () => {
@@ -30,10 +54,8 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
       text: comment,
       timestamp: new Date().toLocaleString(),
     }
-
-    // setRecord([...record, newComment])
     setComments([...comments, newComment])
-
+    addComment(newComment)
     setComment('')
   }
 
@@ -41,7 +63,11 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
     <div className="AlbumComment">
       <div className="comment-container">
         <div className="comment-record-component">
-          <CommentRecord comments={comments} setComments={setComments} />
+          <CommentRecord
+            comments={comments}
+            setComments={setComments}
+            onDelete={onDelete}
+          />
         </div>
         <div className="record-writing-box">
           <textarea

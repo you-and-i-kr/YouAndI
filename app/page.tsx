@@ -16,10 +16,9 @@ export default function Home() {
       <div className="direction-changer">
         {/* header: 달력 아이콘, 하트 모으기 */}
         <header className="home-header">
-          <div>!! 달력 아이콘 !!</div>
-          <div className="heart-wrapper">
+          {/* <div className="heart-wrapper">
             <div className="heart-icon">💗</div>
-          </div>
+          </div> */}
         </header>
 
         {/* main */}

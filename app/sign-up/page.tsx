@@ -1,6 +1,9 @@
 'use client'
 
+import { auth } from '../../firebase'
 import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 // import DatePicker from 'react-datepicker'
 
@@ -24,6 +27,8 @@ export default function SignUp() {
   const [phoneNumber1Message, setPhoneNumber1Message] = useState('')
   const [phoneNumber2Message, setPhoneNumber2Message] = useState('')
   // const [diaryNmMessage, setDiaryNmMessage] = useState('')
+
+  const router = useRouter()
 
   // 이메일 유효성 검사
   const onEmailChange = useCallback(
@@ -100,7 +105,21 @@ export default function SignUp() {
     [],
   )
 
-  const handleSubmit = useCallback(() => {}, [])
+  const handleSubmit = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
+      const user = userCredential.user
+      console.log('User registered:', user)
+      router.push('/')
+      console.log('네비게이션 ')
+    } catch (error: any) {
+      console.error('Error during registration:', error.message)
+    }
+  }
 
   return (
     <>

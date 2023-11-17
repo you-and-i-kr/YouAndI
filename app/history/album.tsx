@@ -1,34 +1,62 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AlbumPopup from './popup'
 import { Comment } from './comment'
 
+import {
+  getDatabase,
+  ref as databaseRef,
+  remove,
+  onValue,
+} from 'firebase/database'
+
 export interface AlbumProps {
-  contents: File[]
-  setContents: (contents: File[]) => void
+  contents: {
+    contentId: string
+    type: string
+    name: string
+    downloadURL: string
+  }[]
 }
 
-const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
+const Album: React.FC<AlbumProps> = ({ contents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
   //각 콘텐츠 별 댓글 저장
   const [comments, setComments] = useState<{ [index: number]: Comment[] }>({})
+
+  const database = getDatabase()
 
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
     setClickedContentIndex(index)
   }
 
-  const handleDelete = () => {
-    const updatedContents = contents.filter(
-      (_, index) => index !== clickedContentIndex,
-    )
+  const handleDelete = async () => {
+    try {
+      const selectedContent = contents[clickedContentIndex]
+      const database = getDatabase()
 
-    const updatedComments = { ...comments }
-    delete updatedComments[clickedContentIndex]
+      //해당 콘텐츠의 댓글도 함께 삭제
+      const commentsRef = databaseRef(
+        database,
+        `comments/${clickedContentIndex}/${selectedContent.contentId}`,
+      )
+      await remove(commentsRef)
 
-    setContents(updatedContents)
-    setComments(updatedComments)
-    setContentClicked(false)
+      const contentsRef = databaseRef(
+        database,
+        `contents/${selectedContent.contentId}`,
+      )
+      await remove(contentsRef)
+
+      const updatedComments = { ...comments }
+      delete updatedComments[clickedContentIndex]
+      setComments(updatedComments)
+
+      setContentClicked(false)
+    } catch (error) {
+      console.error('Error deleting content and comments:', error)
+    }
   }
 
   return (
@@ -44,12 +72,9 @@ const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
                   onClick={() => contentClickHandler(index)}
                 >
                   {content.type.startsWith('image/') ? (
-                    <img
-                      src={URL.createObjectURL(content)}
-                      alt={`Image ${index}`}
-                    />
+                    <img src={content.downloadURL} alt={`Image ${index}`} />
                   ) : content.type.startsWith('video/') ? (
-                    <video controls src={URL.createObjectURL(content)} />
+                    <video controls src={content.downloadURL} />
                   ) : null}
                 </div>
               ) : null}
@@ -60,8 +85,9 @@ const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
         <div className="content-popup">
           <AlbumPopup
             setContentClicked={setContentClicked}
+            clickedContentIndex={clickedContentIndex}
             contents={contents[clickedContentIndex]}
-            comments={comments[clickedContentIndex] || []} //
+            comments={comments[clickedContentIndex] || []}
             setComments={(newComments) =>
               setComments({
                 ...comments,

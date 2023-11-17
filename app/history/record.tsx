@@ -4,24 +4,22 @@ import { Comment } from './comment'
 interface CommentRecordProps {
   comments: Comment[]
   setComments: (comments: Comment[]) => void
+  onDelete: (index: number) => void
 }
 
 const CommentRecord: React.FC<CommentRecordProps> = ({
   comments,
-  setComments,
+  onDelete,
 }) => {
   const [commentoDelete, setCommentDelete] = useState<number | null>(null)
-
+  //코멘트 지우기 확인 메시지
   const deleteHandler = (index: number) => {
     setCommentDelete(index)
   }
-
+  //코멘트 지우기
   const deleteComment = () => {
     if (commentoDelete !== null) {
-      const updatedComments = comments.filter(
-        (_, index) => index !== commentoDelete,
-      )
-      setComments(updatedComments)
+      onDelete(commentoDelete)
       setCommentDelete(null)
     }
   }
@@ -40,14 +38,13 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
     return () => {
       document.removeEventListener('click', handleDocumentClick)
     }
-  }, [commentoDelete])
+  }, [commentoDelete, onDelete])
 
   return (
     <div className="records">
       {comments.map((comment, index) => (
         <div className="comment-records" key={index}>
           <div className="comment-record-con">
-            {/* 나중에 여기다가 유저 닉네임이나 사진 첨부 */}
             <div className="comment-record-text">{comment.text}</div>
             <div className="comment-record-timestamp">{comment.timestamp}</div>
           </div>

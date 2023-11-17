@@ -1,16 +1,30 @@
 'use client'
 
-import Link from 'next/link'
 import Wrapper from './components/Wrapper'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
+import { auth } from '../firebase'
 
 //1. 홈화면
 export default function Home() {
+  const router = useRouter()
+
   const alarms = [
     { content: '남자친구 님이 메모를 새로 작성했습니다.', isRead: false },
     { content: '남자친구님이 사진을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 사진에 댓글을 추가하셨습니다.', isRead: true },
     { content: '남자친구님이 일정을 등록하였습니다.', isRead: true },
   ]
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        router.push('/sign-in')
+      }
+    })
+    return () => unsubscribe()
+  }, [router])
 
   return (
     <Wrapper>
@@ -20,7 +34,6 @@ export default function Home() {
           {/* <div className="heart-wrapper">
             <div className="heart-icon">💗</div>
           </div> */}
-
         </header>
 
         {/* main */}

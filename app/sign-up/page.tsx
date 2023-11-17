@@ -1,13 +1,14 @@
 'use client'
 
-import { auth } from '../../firebase'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 // import DatePicker from 'react-datepicker'
 
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth, database } from '../../firebase'
 import 'react-datepicker/dist/react-datepicker.css'
+import { ref, set } from 'firebase/database'
 
 //회원가입 화면
 export default function SignUp() {
@@ -113,7 +114,18 @@ export default function SignUp() {
         password,
       )
       const user = userCredential.user
+
+      const userData = {
+        email,
+        phoneNumber1,
+        phoneNumber2,
+        diaryNm,
+      }
+      const userRef = ref(database, 'users/' + user.uid)
+      await set(userRef, userData)
+
       console.log('User registered:', user)
+
       router.push('/sign-in')
     } catch (error: any) {
       console.error('Error during registration:', error.message)

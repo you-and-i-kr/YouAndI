@@ -17,16 +17,10 @@ export default function Home() {
       <div className="direction-changer">
         {/* header: 달력 아이콘, 하트 모으기 */}
         <header className="home-header">
-          <div className="icon-wrapper">
-            <Link href="/calendar" style={{ textAlign: 'center' }}>
-              <img src="/calendar.svg" />
-            </Link>
-          </div>
-          <div className="icon-wrapper">
-            <Link href="/history" style={{ textAlign: 'center' }}>
-              <img src="/image-upload.svg" />
-            </Link>
-          </div>
+          {/* <div className="heart-wrapper">
+            <div className="heart-icon">💗</div>
+          </div> */}
+
         </header>
 
         {/* main */}

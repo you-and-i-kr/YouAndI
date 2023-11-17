@@ -114,8 +114,7 @@ export default function SignUp() {
       )
       const user = userCredential.user
       console.log('User registered:', user)
-      router.push('/')
-      console.log('네비게이션 ')
+      router.push('/sign-in')
     } catch (error: any) {
       console.error('Error during registration:', error.message)
     }

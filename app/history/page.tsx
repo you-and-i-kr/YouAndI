@@ -77,7 +77,7 @@ const History = () => {
             className="imageInput"
           />
           <label htmlFor="imageInput">
-            <Album contents={filteredImages} />
+            <Album contents={filteredImages} setContents={setContents} />
           </label>
         </div>
         <style jsx>{`

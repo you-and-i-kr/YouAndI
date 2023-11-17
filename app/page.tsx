@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Wrapper from './components/Wrapper'
 
 //1. 홈화면
@@ -16,15 +17,21 @@ export default function Home() {
       <div className="direction-changer">
         {/* header: 달력 아이콘, 하트 모으기 */}
         <header className="home-header">
-          <div>!! 달력 아이콘 !!</div>
-          <div className="heart-wrapper">
-            <div className="heart-icon">💗</div>
+          <div className="icon-wrapper">
+            <Link href="/calendar" style={{ textAlign: 'center' }}>
+              <img src="/calendar.svg" />
+            </Link>
+          </div>
+          <div className="icon-wrapper">
+            <Link href="/history" style={{ textAlign: 'center' }}>
+              <img src="/image-upload.svg" />
+            </Link>
           </div>
         </header>
 
         {/* main */}
         <main className="home-main">
-          {/* 프로필 사진 & counting */}
+          {/* 프로필 사진 & Link */}
           <div className="home-main__profile">
             <div className="home-main__image-wrapper">
               <img
@@ -34,7 +41,10 @@ export default function Home() {
             </div>
             <div className="home-main__counter-wrapper">
               <div className="home-main__counter-title">만난지</div>
-              <div className="home-main__counter-counting">500일 째</div>
+              <div>
+                <span style={{ color: '#DF5B7B', fontWeight: '600' }}>500</span>
+                <span className="home-main__counter-counting">일 째</span>
+              </div>
             </div>
             <div className="home-main__image-wrapper">
               <img
@@ -80,10 +90,10 @@ export default function Home() {
           flex-direction: row;
           justify-content: end;
           align-items: center;
-          gap: 20px;
+          gap: 5px;
         }
 
-        .heart-wrapper {
+        .icon-wrapper {
           width: 45px;
           height: 25px;
           background: #fbdbe0;
@@ -96,8 +106,14 @@ export default function Home() {
           box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
         }
 
-        .heart-icon {
-          font-size: small;
+        .icon-wrapper a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .icon-wrapper img {
+          width: 35%;
         }
 
         // main
@@ -106,6 +122,7 @@ export default function Home() {
           flex-direction: column;
           align-items: center;
           gap: 80px;
+          margin-bottom: 30px;
         }
 
         .home-main__profile {

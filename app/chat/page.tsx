@@ -79,7 +79,7 @@ export default function Chat() {
       <style jsx>{`
         .chatting {
           width: 90%;
-          height: 80vh;
+          height: 75vh;
           padding: 30px 40px;
           display: flex;
           flex-direction: column;
@@ -139,6 +139,12 @@ export default function Chat() {
 
         .send-chat-wrapper img {
           width: 15px;
+        }
+
+        @media screen and (max-width: 525px) {
+          .chatting {
+            height: 60vh;
+          }
         }
       `}</style>
     </Wrapper>

@@ -21,8 +21,10 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
 
   const minDate = new Date(selectedDay)
   minDate.setDate(minDate.getDate())
-  const minDateString = minDate.toISOString().split('T')[0]
-  //1의 자리수 날짜에는 지금 적용안되고 있음 나중에 고칠 것
+  const year = minDate.getFullYear()
+  const month = String(minDate.getMonth() + 1).padStart(2, '0')
+  const day = String(minDate.getDate()).padStart(2, '0')
+  const minDateString = `${year}-${month}-${day}`
 
   const handleSave = () => {
     onSave({ title, startDate, endDate, memo })
@@ -35,31 +37,46 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <h2>일정 추가</h2>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          min={minDateString}
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          min={minDateString}
-        />
-        <textarea
-          placeholder="Memo"
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
-        />
-        <button onClick={handleSave}>Save Plan</button>
+        <div className="content-type">일정</div>
+        <div className="content-element-box">
+          <input
+            className="elements"
+            type="text"
+            placeholder="제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <div className="content-date-box">
+            <input
+              className="elements"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={minDateString}
+            />
+            ~
+            <input
+              className="elements"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              min={minDateString}
+            />
+          </div>
+          <div className="elements-line"></div>
+
+          <div className="elements">메모</div>
+          <textarea
+            placeholder="메모를 입력하세요"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+          />
+          <div className="content-button-box">
+            <button className="content-button" onClick={handleSave}>
+              저장
+            </button>
+          </div>
+        </div>
       </div>
       <style jsx>{`
         .modal {
@@ -71,22 +88,76 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
         }
 
         .modal-content {
-          width: 50%;
+          position: relative;
+          width: 40%;
           height: 60%;
+          background-color: white;
+          color: black;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
         }
 
-        .modal-content h2 {
-          color: white;
+        .content-type {
+          color: #eeb9be;
+          font-weight: 700;
+          font-size: 20px;
+          margin-top: 30px;
         }
+        .content-element-box {
+          position: relative;
+          width: 65%;
+          height: 80%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .content-element-box textarea {
+          border: none;
+          background-color: #f7f7f7;
+        }
+
+        .content-date-box {
+          width: 70%;
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .elements-line {
+          width: 100%;
+          border-bottom: 2px solid #f7f7f7;
+          margin-bottom: 20px;
+        }
+
+        .elements {
+          color: black;
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+
         .modal-content input {
           border: none;
+          background-color: #f7f7f7;
+          font-size: 14px;
         }
-        .modal-content input:focus {
-          outline: none;
+
+        .close {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+        }
+        .content-button-box {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+        .content-button {
+          position: absolute;
+          bottom: 50px;
+          border: none;
+          background-color: #f7f7f7;
         }
       `}</style>
     </div>

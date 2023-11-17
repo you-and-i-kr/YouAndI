@@ -1,31 +1,48 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Comment } from './comment'
 
 interface CommentRecordProps {
-  setRecord: (value: Comment[]) => void
-  record: Comment[]
+  comments: Comment[]
+  setComments: (comments: Comment[]) => void
+  onDelete: (index: number) => void
 }
 
-const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
+const CommentRecord: React.FC<CommentRecordProps> = ({
+  comments,
+  onDelete,
+}) => {
   const [commentoDelete, setCommentDelete] = useState<number | null>(null)
+  //코멘트 지우기 확인 메시지
   const deleteHandler = (index: number) => {
     setCommentDelete(index)
   }
-  // console.log('받아온거', record)
-
+  //코멘트 지우기
   const deleteComment = () => {
     if (commentoDelete !== null) {
-      const updatedComments = record.filter(
-        (_, index) => index !== commentoDelete,
-      )
-      setRecord(updatedComments)
+      onDelete(commentoDelete)
       setCommentDelete(null)
     }
   }
 
+  useEffect(() => {
+    const handleDocumentClick = (e: MouseEvent) => {
+      if (
+        commentoDelete !== null &&
+        e.target instanceof Element &&
+        !e.target.classList.contains('comment-record-delete-btn')
+      ) {
+        setCommentDelete(null)
+      }
+    }
+    document.addEventListener('click', handleDocumentClick)
+    return () => {
+      document.removeEventListener('click', handleDocumentClick)
+    }
+  }, [commentoDelete, onDelete])
+
   return (
-    <div>
-      {record.map((comment, index) => (
+    <div className="records">
+      {comments.map((comment, index) => (
         <div className="comment-records" key={index}>
           <div className="comment-record-con">
             <div className="comment-record-text">{comment.text}</div>
@@ -40,7 +57,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
             :
           </button>
           {commentoDelete === index && (
-            <div className="delete-btn-content" onClick={deleteComment}>
+            <div className="delete-btn-comment" onClick={deleteComment}>
               삭제
             </div>
           )}
@@ -48,13 +65,21 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
       ))}
       <style jsx>
         {`
+          .record {
+            width: 100%;
+            height: 100%;
+          }
           .comment-records {
+            width: 100%;
             display: flex;
+            justify-content: space-between;
+            margin: 20px 0 20px 0;
           }
           .comment-record-con {
+            position: relative;
             display: flex;
             flex-direction: column;
-            color: white;
+            color: black;
           }
           .comment-record-text {
             font-size: 15px;
@@ -67,11 +92,14 @@ const CommentRecord: React.FC<CommentRecordProps> = ({ record, setRecord }) => {
             border: none;
             background-color: transparent;
             font-size: 15px;
-            color: white;
+            color: black;
           }
-          .delete-btn-content {
-            color: white;
-            font-size: 15px;
+          .delete-btn-comment {
+            position: absolute;
+            right: 25px;
+            color: black;
+            border: none;
+            font-size: 12px;
           }
         `}
       </style>

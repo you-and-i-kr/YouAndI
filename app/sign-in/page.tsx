@@ -2,16 +2,19 @@
 
 import { useCallback, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+import { auth } from '../../firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 //로그인 화면
 export default function SignIn() {
   const [phoneNumber, setPhoneNumber] = useState('')
-
   const [email, setEmail] = useState('')
-
   const [password, setPassword] = useState('')
-
   const [errorMessage, setErrorMessage] = useState('')
+
+  const router = useRouter()
 
   const handleInputForOnlyNumber = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,11 +23,24 @@ export default function SignIn() {
     [],
   )
 
-  const handleLogin = useCallback(() => {
-    setErrorMessage(
-      `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
-    )
-  }, [])
+  const handleLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
+
+      const user = userCredential.user
+      console.log('User signed in:', user)
+      router.push('/')
+    } catch (error: any) {
+      console.error('Error during login:', error.message)
+      setErrorMessage(
+        `전화번호, 이메일 또는 비밀번호를 잘못 입력하였습니다.\n \n다시 입력해 주세요.`,
+      )
+    }
+  }
 
   return (
     <>

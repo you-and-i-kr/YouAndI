@@ -69,7 +69,7 @@ export default function SignUp() {
   )
 
   // 전화번호 유효성 검사
-  const onPhoneNuberChange = useCallback(
+  const onPhoneNumberChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>, num: string) => {
       const phoneNuberRegex = /^010([0-9]{4})([0-9]{4})$/
 
@@ -121,8 +121,24 @@ export default function SignUp() {
         phoneNumber2,
         diaryNm,
       }
+
       const userRef = ref(database, 'users/' + user.uid)
       await set(userRef, userData)
+
+      // Create user-specific paths in your database
+      const userCalendarPath = `calendars/${user.uid}`
+      const userAlbumPath = `albums/${user.uid}`
+
+      // Store user-specific data in the database
+      await set(ref(database, userCalendarPath), {
+        // User-specific calendar data
+        // ...
+      })
+
+      await set(ref(database, userAlbumPath), {
+        // User-specific album data
+        // ...
+      })
 
       console.log('User registered:', user)
 
@@ -179,7 +195,7 @@ export default function SignUp() {
                 placeholder="내 전화번호(11자리 '-' 없이 입력)"
                 value={phoneNumber1}
                 maxLength={11}
-                onChange={(e) => onPhoneNuberChange(e, 'num1')}
+                onChange={(e) => onPhoneNumberChange(e, 'num1')}
               />
               {phoneNumber1Message && (
                 <p className="errorMessage">{phoneNumber1Message}</p>
@@ -188,7 +204,7 @@ export default function SignUp() {
                 placeholder="상대 전화번호"
                 value={phoneNumber2}
                 maxLength={11}
-                onChange={(e) => onPhoneNuberChange(e, 'num2')}
+                onChange={(e) => onPhoneNumberChange(e, 'num2')}
               />
               {phoneNumber2Message && (
                 <p className="errorMessage">{phoneNumber2Message}</p>

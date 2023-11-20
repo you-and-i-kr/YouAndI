@@ -3,8 +3,19 @@
 import React, { useEffect, useState } from 'react'
 import PlanPopup from './planPopup'
 import SetPopup from './setPopup'
-import { ref, onValue, remove, getDatabase, off, set } from 'firebase/database'
+import {
+  ref,
+  onValue,
+  remove,
+  getDatabase,
+  off,
+  set,
+  get,
+} from 'firebase/database'
 import app from '@/firebase'
+import { auth } from '../../firebase'
+
+import { v4 as uuidv4 } from 'uuid'
 
 interface CalendarProps {
   initialYear: number
@@ -29,45 +40,37 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
   const [editPlan, setEditPlan] = useState<PlanContent | null>(null)
   const [setPopupPlan, setSetPopupPlan] = useState<PlanContent | null>(null)
 
-  useEffect(() => {
-    const database = getDatabase(app)
-    const eventsRef = ref(database, 'events')
+  const user = auth.currentUser
+  const userId = user?.uid
+  const database = getDatabase(app)
 
-    const handleDataChange = (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val()
-        const plansArray = Object.values(data)
-        setPlans(plansArray)
-      } else {
-        setPlans([])
+  //일정 받아오기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const databaseRef = ref(database, `events/${userId}`)
+        onValue(databaseRef, (snapshot) => {
+          const data = snapshot.val()
+          if (data) {
+            const plansArray = Object.values(data)
+            setPlans(plansArray)
+          } else {
+            setPlans([])
+          }
+        })
+      } catch (error) {
+        console.error('Error fetching plans from Firebase:', error)
       }
     }
-    onValue(eventsRef, handleDataChange)
 
-    const handleChildRemoved = (childSnapshot) => {
-      setPlans((prevPlans) =>
-        prevPlans.filter((plan) => plan.id !== childSnapshot.key),
-      )
-    }
-    const handleChildChanged = (childSnapshot) => {
-      setPlans((prevPlans) =>
-        prevPlans.map((plan) =>
-          plan.id === childSnapshot.key
-            ? { ...plan, ...childSnapshot.val() }
-            : plan,
-        ),
-      )
-    }
-    onValue(eventsRef, handleChildRemoved, { onlyOnce: false })
-    onValue(eventsRef, handleChildChanged, { onlyOnce: false })
-
+    fetchData()
     return () => {
-      off(eventsRef, handleDataChange)
-      off(eventsRef, handleChildRemoved)
-      off(eventsRef, handleChildChanged)
+      const databaseRef = ref(database, `events/${userId}`)
+      off(databaseRef)
     }
-  }, [])
+  }, [userId, database])
 
+  //캘린더 생성
   const generateCalendar = (year: number, month: number) => {
     const lastDay = new Date(year, month + 1, 0)
     const days: number[] = []
@@ -87,7 +90,6 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
       setMonth(month - 1)
     }
   }
-
   const goToNextMonth = () => {
     if (month === 11) {
       setYear(year + 1)
@@ -96,24 +98,20 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
       setMonth(month + 1)
     }
   }
-
+  //알정 삭제
   const onDelete = () => {
     if (setPopupPlan) {
       const planId = setPopupPlan.id
-      const database = getDatabase(app)
-      const databaseRef = ref(database, 'events/' + planId)
+      const databaseRef = ref(getDatabase(app), `events/${userId}/${planId}`)
 
       remove(databaseRef)
-        .then(() => {
-          console.log('Plan deleted from Firebase Realtime Database')
-        })
-        .catch((error) => {
+        .then(() => console.log('Plan deleted from Firebase Realtime Database'))
+        .catch((error) =>
           console.error(
             'Error deleting plan from Firebase Realtime Database:',
             error,
-          )
-        })
-
+          ),
+        )
       closePopup()
     }
   }
@@ -134,24 +132,46 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     setPopupOpen(false)
     setSetPopupOpen(false)
   }
-  const handleEditSavePlan = (newPlan: PlanContent) => {
-    const database = getDatabase(app)
-    const databaseRef = ref(database, 'events/' + setPopupPlan?.id)
 
+  //일정 수정
+  const handleEditSavePlan = (newPlan: PlanContent) => {
+    const databaseRef = ref(getDatabase(app), `events/${userId}/${newPlan.id}`)
     set(databaseRef, newPlan)
-      .then(() => {
-        console.log('Plan edited and saved in Firebase Realtime Database')
-      })
-      .catch((error) => {
+      .then(() =>
+        console.log('Plan edited and saved in Firebase Realtime Database'),
+      )
+      .catch((error) =>
         console.error(
           'Error editing and saving plan in Firebase Realtime Database:',
           error,
-        )
-      })
+        ),
+      )
+
     setPlans((prevPlans) =>
       prevPlans.map((plan) => (plan.id === setPopupPlan?.id ? newPlan : plan)),
     )
     closePopup()
+  }
+
+  const handleSave = (id, title, startDate, endDate, memo) => {
+    const newEvent: PlanContent = {
+      id,
+      title,
+      startDate,
+      endDate,
+      memo,
+    }
+    addEventToDatabase(newEvent)
+    closePopup()
+  }
+
+  const addEventToDatabase = (newEvent: PlanContent) => {
+    if (user) {
+      const eventsRef = ref(database, `events/${userId}/${newEvent.id}`)
+      set(eventsRef, newEvent)
+    } else {
+      console.error('User is not authenticated.')
+    }
   }
 
   return (
@@ -202,17 +222,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
         <div className="calendar-popup">
           <PlanPopup
             onClose={closePopup}
-            onSave={(newPlan) => {
-              if (editPlan) {
-                const updatedPlans = plans.map((plan: PlanContent) =>
-                  plan.startDate === editPlan.startDate ? newPlan : plan,
-                )
-                setPlans(updatedPlans)
-              } else {
-                setPlans([...plans, newPlan])
-              }
-              closePopup()
-            }}
+            handleSave={handleSave}
             selectedDay={selectedDay}
             plan={editPlan}
           />

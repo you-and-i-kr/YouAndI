@@ -1,21 +1,24 @@
 import React, { useState } from 'react'
 import { PlanContent } from './myCalendar'
+
 import { v4 as uuidv4 } from 'uuid'
-import firebase from 'firebase/app' // Import only the Firebase App
-import 'firebase/database' // Import Firebase Realtime Database
-import { getDatabase, ref, set } from 'firebase/database'
-import app from '@/firebase'
 
 interface PlanPopupProps {
   onClose: () => void
-  onSave: (newPlan: PlanContent) => void
+  handleSave: (
+    id: string,
+    title: string,
+    startDate: string,
+    endDate: string,
+    memo: string,
+  ) => void
   selectedDay: string
   plan: PlanContent | null
 }
 
 export const PlanPopup: React.FC<PlanPopupProps> = ({
   onClose,
-  onSave,
+  handleSave,
   plan,
   selectedDay,
 }) => {
@@ -34,18 +37,9 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
   const generateUniqueId = () => {
     return uuidv4()
   }
-  const handleSave = () => {
-    const id = generateUniqueId()
-    onSave({ id, title, startDate, endDate, memo })
-    addEventToDatabase({ id, title, startDate, endDate, memo })
-    onClose()
-  }
 
-  const addEventToDatabase = (newEvent: PlanContent) => {
-    const database = getDatabase(app)
-    const eventsRef = ref(database, 'events/' + newEvent.id)
-    set(eventsRef, newEvent)
-  }
+  const id = generateUniqueId()
+
   return (
     <div className="modal">
       <div className="modal-content">
@@ -87,7 +81,10 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
             onChange={(e) => setMemo(e.target.value)}
           />
           <div className="content-button-box">
-            <button className="content-button" onClick={handleSave}>
+            <button
+              className="content-button"
+              onClick={() => handleSave(id, title, startDate, endDate, memo)}
+            >
               저장
             </button>
           </div>

@@ -5,13 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface PlanPopupProps {
   onClose: () => void
-  handleSave: (
-    id: string,
-    title: string,
-    startDate: string,
-    endDate: string,
-    memo: string,
-  ) => void
+  handleSave: (newEvent: PlanContent) => void
   selectedDay: string
   plan: PlanContent | null
 }
@@ -83,7 +77,9 @@ export const PlanPopup: React.FC<PlanPopupProps> = ({
           <div className="content-button-box">
             <button
               className="content-button"
-              onClick={() => handleSave(id, title, startDate, endDate, memo)}
+              onClick={() =>
+                handleSave({ id, title, startDate, endDate, memo })
+              }
             >
               저장
             </button>

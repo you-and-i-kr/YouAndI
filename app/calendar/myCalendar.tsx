@@ -52,7 +52,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
         onValue(databaseRef, (snapshot) => {
           const data = snapshot.val()
           if (data) {
-            const plansArray = Object.values(data)
+            const plansArray: PlanContent[] = Object.values(data)
             setPlans(plansArray)
           } else {
             setPlans([])
@@ -153,14 +153,7 @@ export const MyCalendar = ({ initialYear, initialMonth }: CalendarProps) => {
     closePopup()
   }
 
-  const handleSave = (id, title, startDate, endDate, memo) => {
-    const newEvent: PlanContent = {
-      id,
-      title,
-      startDate,
-      endDate,
-      memo,
-    }
+  const handleSave = (newEvent: PlanContent) => {
     addEventToDatabase(newEvent)
     closePopup()
   }

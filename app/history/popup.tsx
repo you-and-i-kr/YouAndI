@@ -3,12 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import AlbumComment, { Comment } from './comment'
 import DeleteConfirmation from './deleteConfirmation'
-import {
-  getDatabase,
-  ref as databaseRef,
-  remove,
-  onValue,
-} from 'firebase/database'
+import { getDatabase, ref as databaseRef, remove } from 'firebase/database'
+import { ContentType } from './album'
+
+import { auth } from '../../firebase'
 
 interface AlbumPopupProps {
   contents: {
@@ -20,18 +18,19 @@ interface AlbumPopupProps {
   setContentClicked: (value: boolean) => void
   comments: Comment[]
   setComments: (comments: Comment[]) => void
-  onDelete: () => void
-  clickedContentIndex: number
+  setContents: (prevContents: ContentType[]) => void
 }
 
 const AlbumPopup: React.FC<AlbumPopupProps> = ({
-  onDelete,
   contents,
   setContentClicked,
   comments,
   setComments,
-  clickedContentIndex,
+  setContents,
 }) => {
+  const user = auth.currentUser
+  const userId = user?.uid
+
   const [deleteContent, setDeleteContent] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState(false)
 
@@ -46,74 +45,40 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
   }
 
   const confirmDelete = () => {
-    onDelete()
     setDeleteConfirmation(false)
+    handleDeleteContents()
   }
 
   const cancelDelete = () => {
     setDeleteConfirmation(false)
   }
 
-  useEffect(() => {
-    if (clickedContentIndex) {
-      const selectedImageCommentsRef = databaseRef(
-        database,
-        `comments/${clickedContentIndex}/${contents.contentId}`,
-      )
-
-      const unsubscribeComments = onValue(
-        selectedImageCommentsRef,
-        (snapshot) => {
-          const data = snapshot.val()
-          if (data) {
-            const commentsArray = Object.values(data)
-            setComments(commentsArray)
-          } else {
-            setComments([])
-          }
-        },
-        {
-          onlyOnce: true,
-        },
-      )
-
-      return () => unsubscribeComments()
-    }
-  }, [clickedContentIndex, database, contents])
-
-  // 코멘트 지우기
-  const handleCommentDelete = async (commentIndex: number) => {
+  //사진 삭제
+  const handleDeleteContents = async () => {
     try {
+      const contentId = contents.contentId
+      const contentsRef = databaseRef(
+        database,
+        `contents/${userId}/${contentId}`,
+      )
+      await remove(contentsRef)
+      //해당 콘텐츠의 댓글도 함께 삭제
       const commentsRef = databaseRef(
         database,
-        `comments/${clickedContentIndex}/${contents.contentId}`,
+        `contents/${userId}/${contentId}`,
       )
       await remove(commentsRef)
 
-      const updatedComments = comments.filter(
-        (_, index) => index !== commentIndex,
+      setContents((prevContents) =>
+        prevContents.filter((content) => content.contentId !== contentId),
       )
-      setComments(updatedComments)
+      setComments([])
+      setContentClicked(false)
+      console.log('Content deleted successfully')
     } catch (error) {
-      console.error('Error deleting comment:', error)
+      console.error('Error deleting content and comments:', error)
     }
   }
-  //사진지우기
-  useEffect(() => {
-    const handleContentDelete = (e: MouseEvent) => {
-      if (
-        deleteContent &&
-        e.target instanceof Element &&
-        !e.target.classList.contains('content-delete-box')
-      ) {
-        setDeleteContent(false)
-      }
-    }
-    document.addEventListener('click', handleContentDelete)
-    return () => {
-      document.removeEventListener('click', handleContentDelete)
-    }
-  }, [deleteContent])
 
   return (
     <div className="AlbumPopup">
@@ -133,8 +98,6 @@ const AlbumPopup: React.FC<AlbumPopupProps> = ({
           comments={comments}
           setComments={setComments}
           contents={contents}
-          clickedContentIndex={clickedContentIndex}
-          onDelete={handleCommentDelete}
         />
       </div>
       <div className="content-btns-box">

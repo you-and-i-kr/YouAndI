@@ -2,7 +2,7 @@
 'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Wrapper from '../components/Wrapper'
-import Album from './album'
+import Album, { ContentType } from './album'
 
 import {
   getStorage,
@@ -20,12 +20,13 @@ import {
 } from 'firebase/database'
 
 import app from '../../firebase'
+import { auth } from '../../firebase'
 
 const History = () => {
-  const [filter, setFilter] = useState('all') // 'all', 'photos', 'videos'
-  // const [contents, setContents] = useState<File[]>([])
-  const [imagesData, setImagesData] = useState<any[]>([])
+  const [filter, setFilter] = useState('all')
+  const [imagesData, setImagesData] = useState<ContentType[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null)
+
   const storage = getStorage(app)
   const database = getDatabase(app)
 
@@ -33,25 +34,27 @@ const History = () => {
     setFilter(type)
   }
   const contentNumber = imagesData && imagesData.length
-
   const images = imagesData.filter((file) => file.type.startsWith('image/'))
   const imagesNumber = images && images.length
   const videos = imagesData.filter((file) => file.type.startsWith('video/'))
   const videosNumber = videos.length
 
+  const user = auth.currentUser
+  const userId = user?.uid
+
   useEffect(() => {
-    const contentsRef = databaseRef(database, 'contents')
+    const contentsRef = databaseRef(database, `contents/${userId}`)
     const unsubscribe = onValue(contentsRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
-        const imagesArray = Object.values(data)
+        const imagesArray: ContentType[] = Object.values(data)
         setImagesData(imagesArray)
         console.log(images)
       }
     })
 
     return () => unsubscribe()
-  }, [database])
+  }, [database, userId])
 
   const handleImageUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +65,10 @@ const History = () => {
       const files = Array.from(e.target.files)
 
       for (const file of files) {
-        const storageRefInstance = storageRef(storage, `uploads/${file.name}`)
+        const storageRefInstance = storageRef(
+          storage,
+          `uploads/${userId}/${file.name}`,
+        )
 
         try {
           // 파베 스토리지에 데이터 넣기
@@ -71,7 +77,7 @@ const History = () => {
           const downloadURL = await getDownloadURL(storageRefInstance)
 
           // 리얼타임 데이터베이스에 넣기
-          const contentsRef = databaseRef(database, 'contents')
+          const contentsRef = databaseRef(database, `contents/${userId}`)
           const newContentRef = push(contentsRef)
 
           const contentId = newContentRef.key
@@ -81,6 +87,7 @@ const History = () => {
             name: file.name,
             type: file.type,
             downloadURL,
+            userId: userId,
           }
 
           // 리얼타임 데이터베이스에 넣기
@@ -92,7 +99,7 @@ const History = () => {
         }
       }
     },
-    [storage, database],
+    [storage, database, userId],
   )
   const handleUploadButtonClick = useCallback(() => {
     if (inputRef.current) {
@@ -102,11 +109,15 @@ const History = () => {
 
   const filteredImages = imagesData.filter((file) => {
     if (filter === 'all') {
-      return true
+      return file.userId === userId
     } else if (filter === 'photos') {
-      return file.type && file.type.startsWith('image/')
+      return (
+        file.type && file.type.startsWith('image/') && file.userId === userId
+      )
     } else if (filter === 'videos') {
-      return file.type && file.type.startsWith('video/')
+      return (
+        file.type && file.type.startsWith('video/') && file.userId === userId
+      )
     }
     return false
   })
@@ -142,7 +153,7 @@ const History = () => {
             className="imageInput"
           />
           <label htmlFor="imageInput">
-            <Album contents={filteredImages} />
+            <Album contents={filteredImages} setContents={setImagesData} />
           </label>
         </div>
         <style jsx>{`

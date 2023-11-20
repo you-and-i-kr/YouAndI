@@ -2,7 +2,32 @@
 
 import Link from 'next/link'
 
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { auth } from '../../firebase'
+
 export default function Header() {
+  const [user, setUser] = useState(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+      setUser(user)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut()
+      router.push('/sign-in')
+    } catch (error: any) {
+      console.error('Error during logout:', error.message)
+    }
+  }
+
   return (
     <>
       <header>
@@ -11,7 +36,15 @@ export default function Header() {
             <img className="logo-img" src="/images/logo.png"></img>
           </div>
         </Link>
-        <button className="logout">로그아웃</button>
+        {user ? (
+          <button className="logout" onClick={handleLogout}>
+            로그아웃
+          </button>
+        ) : (
+          <Link href={'/sign-in'}>
+            <button className="logout">로그인</button>
+          </Link>
+        )}
       </header>
 
       <style jsx>{`

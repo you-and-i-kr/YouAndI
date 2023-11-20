@@ -1,11 +1,12 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { auth } from '../../firebase'
+import { auth, database } from '../../firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import { onValue, ref } from 'firebase/database'
 
 //로그인 화면
 export default function SignIn() {
@@ -33,6 +34,29 @@ export default function SignIn() {
 
       const user = userCredential.user
       console.log('User signed in:', user)
+
+      // Fetch user-specific data when the user is authenticated
+      const uid = user.uid
+      const userCalendarPath = `calendars/${uid}`
+      const userAlbumPath = `albums/${uid}`
+
+      const calendarRef = ref(database, userCalendarPath)
+      const albumRef = ref(database, userAlbumPath)
+
+      // Fetch user-specific calendar data
+      onValue(calendarRef, (snapshot) => {
+        const calendarData = snapshot.val()
+        // Update your component state with the user-specific calendar data
+        // ...
+      })
+
+      // Fetch user-specific album data
+      onValue(albumRef, (snapshot) => {
+        const albumData = snapshot.val()
+        // Update your component state with the user-specific album data
+        // ...
+      })
+
       router.push('/')
     } catch (error: any) {
       console.error('Error during login:', error.message)
@@ -42,6 +66,32 @@ export default function SignIn() {
     }
   }
 
+  useEffect(() => {
+    const user = auth.currentUser
+
+    if (user) {
+      const uid = user.uid
+      const userCalendarPath = `calendars/${uid}`
+      const userAlbumPath = `albums/${uid}`
+
+      const calendarRef = ref(database, userCalendarPath)
+      const albumRef = ref(database, userAlbumPath)
+
+      // Fetch user-specific calendar data
+      onValue(calendarRef, (snapshot) => {
+        const calendarData = snapshot.val()
+        // Update your component state with the user-specific calendar data
+        // ...
+      })
+
+      // Fetch user-specific album data
+      onValue(albumRef, (snapshot) => {
+        const albumData = snapshot.val()
+        // Update your component state with the user-specific album data
+        // ...
+      })
+    }
+  }, [auth.currentUser])
   return (
     <>
       <div className="sign-in">

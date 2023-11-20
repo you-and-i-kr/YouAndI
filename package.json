@@ -22,9 +22,11 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.19.0",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.49.0",

@@ -37,7 +37,6 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
   contents,
 }) => {
   const [comment, setComment] = useState('')
-
   const database = getDatabase(app)
 
   const user = auth.currentUser

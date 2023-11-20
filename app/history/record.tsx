@@ -11,34 +11,34 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
   comments,
   onDelete,
 }) => {
-  const [commentoDelete, setCommentDelete] = useState<number | null>(null)
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
   //코멘트 지우기 확인 메시지
   const deleteHandler = (index: number) => {
-    setCommentDelete(index)
+    setDeleteIndex(index)
   }
   //코멘트 지우기
   const deleteComment = () => {
-    if (commentoDelete !== null) {
-      onDelete(commentoDelete)
-      setCommentDelete(null)
+    if (deleteIndex !== null) {
+      onDelete(deleteIndex)
+      setDeleteIndex(null)
     }
   }
-
+  console.log('인덱스', deleteIndex)
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       if (
-        commentoDelete !== null &&
+        deleteIndex !== null &&
         e.target instanceof Element &&
         !e.target.classList.contains('comment-record-delete-btn')
       ) {
-        setCommentDelete(null)
+        setDeleteIndex(null)
       }
     }
     document.addEventListener('click', handleDocumentClick)
     return () => {
       document.removeEventListener('click', handleDocumentClick)
     }
-  }, [commentoDelete, onDelete])
+  }, [deleteIndex, onDelete])
 
   return (
     <div className="records">
@@ -56,7 +56,7 @@ const CommentRecord: React.FC<CommentRecordProps> = ({
           >
             :
           </button>
-          {commentoDelete === index && (
+          {deleteIndex === index && (
             <div className="delete-btn-comment" onClick={deleteComment}>
               삭제
             </div>

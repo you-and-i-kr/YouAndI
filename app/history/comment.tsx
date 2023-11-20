@@ -1,13 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CommentRecord from './record'
 
 import app from '../../firebase'
-import { getDatabase, ref as databaseRef, push, set } from 'firebase/database'
+import {
+  getDatabase,
+  ref as databaseRef,
+  push,
+  set,
+  onValue,
+  remove,
+} from 'firebase/database'
+import { auth } from '../../firebase'
 
 interface AlbumCommentProps {
   comments: Comment[]
-  clickedContentIndex: number
-  onDelete: () => void
   setComments: (comments: Comment[]) => void
   contents: {
     contentId: string
@@ -18,7 +24,9 @@ interface AlbumCommentProps {
 }
 
 export interface Comment {
-  member_id: number
+  comment_id: string
+  member_id: string
+  content_id: string
   text: string
   timestamp: string
 }
@@ -27,36 +35,90 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
   comments,
   setComments,
   contents,
-  clickedContentIndex,
-  onDelete,
 }) => {
   const [comment, setComment] = useState('')
+
   const database = getDatabase(app)
+
+  const user = auth.currentUser
+  const userId = user?.uid
+
+  //댓글 가져오기
+  useEffect(() => {
+    if (contents) {
+      const selectedImageCommentsRef = databaseRef(
+        database,
+        `comments/${contents.contentId}`,
+      )
+
+      const unsubscribeComments = onValue(
+        selectedImageCommentsRef,
+        (snapshot) => {
+          const data = snapshot.val()
+          if (data) {
+            const commentsArray: Comment[] = Object.values(data)
+            setComments(commentsArray)
+          } else {
+            setComments([])
+          }
+        },
+        {
+          onlyOnce: true,
+        },
+      )
+
+      return () => unsubscribeComments()
+    }
+  }, [database, contents])
 
   const handleCommentChange = (e: {
     target: { value: React.SetStateAction<string> }
   }) => {
     setComment(e.target.value)
   }
-
-  const addComment = (newComment: Comment) => {
-    const commentsRef = databaseRef(
-      database,
-      `comments/${clickedContentIndex}/${contents.contentId}`,
-    )
-    const newCommentRef = push(commentsRef)
-    set(newCommentRef, newComment)
-  }
-
+  //댓글추가서브밋
   const handleSubmit = () => {
     const newComment: Comment = {
-      member_id: 1234,
+      content_id: contents.contentId,
+      member_id: userId || '',
       text: comment,
       timestamp: new Date().toLocaleString(),
+      comment_id: '',
     }
     setComments([...comments, newComment])
     addComment(newComment)
     setComment('')
+  }
+
+  //댓글추가
+  const addComment = (newComment: Comment) => {
+    const commentsRef = databaseRef(database, `comments/${contents.contentId}`)
+    const newCommentRef = push(commentsRef)
+    const commentId = newCommentRef.key
+    const commentWithId = { ...newComment, comment_id: commentId }
+    set(newCommentRef, commentWithId)
+  }
+
+  //댓글삭제
+  const handleCommentDelete = async (commentIndex: number) => {
+    try {
+      const commentIdToDelete = comments[commentIndex]?.comment_id
+
+      if (commentIdToDelete) {
+        const commentRef = databaseRef(
+          database,
+          `comments/${contents.contentId}/${commentIdToDelete}`,
+        )
+        await remove(commentRef)
+
+        const updatedComments = comments.filter(
+          (_, index) => index !== commentIndex,
+        )
+        setComments(updatedComments)
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error)
+    }
   }
 
   return (
@@ -66,7 +128,7 @@ const AlbumComment: React.FC<AlbumCommentProps> = ({
           <CommentRecord
             comments={comments}
             setComments={setComments}
-            onDelete={onDelete}
+            onDelete={handleCommentDelete}
           />
         </div>
         <div className="record-writing-box">

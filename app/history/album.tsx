@@ -9,54 +9,28 @@ import {
   onValue,
 } from 'firebase/database'
 
-export interface AlbumProps {
-  contents: {
-    contentId: string
-    type: string
-    name: string
-    downloadURL: string
-  }[]
+export interface ContentType {
+  contentId: string
+  type: string
+  name: string
+  downloadURL: string
+  userId: string
 }
 
-const Album: React.FC<AlbumProps> = ({ contents }) => {
+export interface AlbumProps {
+  contents: ContentType[]
+  setContents: (prevContents: ContentType[]) => void
+}
+
+const Album: React.FC<AlbumProps> = ({ contents, setContents }) => {
   const [contentClicked, setContentClicked] = useState(false)
   const [clickedContentIndex, setClickedContentIndex] = useState<number>(0)
   //각 콘텐츠 별 댓글 저장
   const [comments, setComments] = useState<{ [index: number]: Comment[] }>({})
 
-  const database = getDatabase()
-
   const contentClickHandler = (index: number) => {
     setContentClicked(!contentClicked)
     setClickedContentIndex(index)
-  }
-
-  const handleDelete = async () => {
-    try {
-      const selectedContent = contents[clickedContentIndex]
-      const database = getDatabase()
-
-      //해당 콘텐츠의 댓글도 함께 삭제
-      const commentsRef = databaseRef(
-        database,
-        `comments/${clickedContentIndex}/${selectedContent.contentId}`,
-      )
-      await remove(commentsRef)
-
-      const contentsRef = databaseRef(
-        database,
-        `contents/${selectedContent.contentId}`,
-      )
-      await remove(contentsRef)
-
-      const updatedComments = { ...comments }
-      delete updatedComments[clickedContentIndex]
-      setComments(updatedComments)
-
-      setContentClicked(false)
-    } catch (error) {
-      console.error('Error deleting content and comments:', error)
-    }
   }
 
   return (
@@ -84,8 +58,8 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
       {contentClicked && (
         <div className="content-popup">
           <AlbumPopup
+            setContents={setContents}
             setContentClicked={setContentClicked}
-            clickedContentIndex={clickedContentIndex}
             contents={contents[clickedContentIndex]}
             comments={comments[clickedContentIndex] || []}
             setComments={(newComments) =>
@@ -94,7 +68,6 @@ const Album: React.FC<AlbumProps> = ({ contents }) => {
                 [clickedContentIndex]: newComments,
               })
             }
-            onDelete={handleDelete}
           />
         </div>
       )}

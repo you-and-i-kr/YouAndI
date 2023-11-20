@@ -3,19 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import PlanPopup from './planPopup'
 import SetPopup from './setPopup'
-import {
-  ref,
-  onValue,
-  remove,
-  getDatabase,
-  off,
-  set,
-  get,
-} from 'firebase/database'
+import { ref, onValue, remove, getDatabase, off, set } from 'firebase/database'
 import app from '@/firebase'
 import { auth } from '../../firebase'
-
-import { v4 as uuidv4 } from 'uuid'
 
 interface CalendarProps {
   initialYear: number
